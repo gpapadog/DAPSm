@@ -1,11 +1,20 @@
-# Author:       Georgia Papadogeorgou
-# Update:       I updated MinDistMatch to perform matching of the last pair, where
-#               M has decreased to potentially a vector. I also got rid of the
-#               absolute specification of the caliper. I created a new caliper_type
-#               variable that controls whether the caliper should be based on the
-#               DAPS or the PS.
-# Last Updated: 4/9/2016
-# Update: (7/29/2016) Added coord_dist = T/F.
+#' Linear regression
+#'
+#' Runs an OLS regression not unlike \code{\link{lm}}
+#'
+#' @param y response vector (1 x n)
+#' @param X covariate matrix (p x n) with no intercept
+#'
+#' @return A list with 4 elements: coefficients, vcov, sigma, df
+#'
+#' @examples
+#' data(mtcars)
+#' X <- as.matrix(mtcars[, c("cyl", "disp", "hp")])
+#' y <- mtcars[, "mpg"]
+#' linreg(y, X)
+#'
+#' @export
+#'
 
 MinDistMatch <- function(M, caliper = NULL) {
   # Function that takes in a matrix M and runs through it matching observations
