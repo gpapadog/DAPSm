@@ -69,45 +69,62 @@ MinDistMatch <- function(M, caliper = NULL) {
 
 
 
+#' The central DAPS function
+#'
+#' Takes in a two data frames one with treatment and one with control units
+#' including the variables: Longitude, Latitude and propensity scores (as
+#' prop.scores) and returns a matrix of the matched pairs using DAPS, and
+#' information on PS difference, matching difference, distance. Caliper can
+#' can be specified on PS difference or DAPS.
+#'
+#' @param treated        A data frame include the treated units and the
+#'                       variables: 'Longitude', 'Latitude' and propensity
+#'                       scores (named 'prop.scores'). The rownames of treated
+#'                       should be the unit ids.
+#' @param control        Control units. Same variables as in treated.
+#' @param caliper        A caliper of DAPS or PS difference for matching.
+#' @param weight         Number between 0 and 1, percentage of matching weight
+#'                       to be given on propensity score difference.
+#' @param coords.columns If the columns of coordinates are not named
+#'                      'Longitude', 'Latitude', coords.cols should be the
+#'                       column indeces corresponding to longitude and
+#'                       latitude accordingly.
+#' @param distance       Function that takes in the distance matrix and returns
+#'                       the standardized distance matrix. Defaults to the
+#'                       function that subtracks the minimum and divides by
+#'                       the range.
+#' @param caliper_type   Whether we want the caliper to be on DAPS or on the PS.
+#'                       caliper_type must either be 'DAPS', or 'PS'.
+#' @param coord_dist     Set to true when we want to use a distance function that
+#'                       calculates the spherical distance of points instead of
+#'                       euclidean. Defaults to FALSE.
+#'
+#' @return A dataframe, where each row corresponds to each treated unit, and
+#' includes: the control unit to which it was matched, their propensity score
+#' difference, their DAPS difference, their distance, their standardized distance.
+#'
+#' @examples
+#' set.seed(1)
+#' long <- seq(0, 1, by = 0.01)
+#' coords <- expand.grid(long = long, lat = long)
+#' coords <- coords[sample(1:nrow(coords), 200), ]
+#' X <- matrix(rnorm(3 * nrow(coords)), nrow(coords), 3)
+#' p <- 1 / (1 + exp(- X %*% c(1, -2, 1.7) - coords[, 1] ^ 2 - coords[, 2]))
+#' Z <- rbinom(nrow(coords), 1, prob = p)
+#' glmod <- glm(Z ~ X, family = binomial)
+#' dat <- cbind(Longitude = coords[, 1], Latitude = coords[, 2],
+#'              prop.scores = glmod$fitted.values, Trt = Z)
+#' dat <- as.data.frame(dat)
+#' rownames(dat) <- 1:nrow(dat)
+#' daps <- dist.ps(treated = dat[dat$Trt == 1, ], control = dat[dat$Trt == 0, ],
+#'                 caliper_type = 'DAPS', caliper = 1)
+#' head(daps)
+#' 
+#' @export
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
                     caliper_type, coord_dist = FALSE) {
-  # Function that takes in a two data frames one with treatment and one
-  # with control units including the variables: Longitude, Latitude and
-  # propensity scores (as prop.scores) and returns a matrix of the
-  # matched pairs using DAPS, and information on PS difference, matching
-  # difference, distance. Weight on PS can be specified, as well as DAPS
-  # caliper.
-  #
-  # Args:
-  #  treated:        A data frame include the treated units and the
-  #                  variables: 'Longitude', 'Latitude' and propensity
-  #                  scores (named 'prop.scores'). The rownames of treated
-  #                  should be the unit ids.
-  #  control:        Control units. Same variables as in treated.
-  #  caliper:        A caliper of DAPS for matching.
-  #  weight:         Number between 0 and 1, percentage of matching weight
-  #                  to be given on propensity score difference.
-  #  coords.columns: If the columns of coordinates are not named
-  #                  'Longitude', 'Latitude', coords.cols should be the
-  #                  column indeces corresponding to longitude and
-  #                  latitude accordingly.
-  #  distance:       Function that takes in the distance matrix and returns
-  #                  the standardized distance matrix. Defaults to the
-  #                  funcion that subtracks the minimum and divides by
-  #                  the range.
-  #  caliper_type:   Whether we want the caliper to be on DAPS or on the PS.
-  #                  caliper_type must either be 'DAPS', or 'PS'.
-  #  coord_dist:     Set to true when we want to use a distance function that
-  #                  calculates the spherical distance of points instead of
-  #                  euclidean. Defaults to FALSE.
-  #
-  # Returns:
-  #  A dataframe, where each row corresponds to each treated unit, and
-  #  includes: the control unit to which it was matched, their propensity
-  #  score difference, their DAPS difference, their distance, their
-  #  standardized distance.
-  
+
   require(fields)  # In order to use rdist().
   
   if (!is.null(coords.columns)) {
