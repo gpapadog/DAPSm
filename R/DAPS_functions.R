@@ -188,43 +188,48 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 
 
 
-
+#' DAPSm with optimal weight
+#' Function that chooses the optimal weight and fits DAPSm.
+#' 
+#' @param dataset
+#' Data frame including treatment, outcome, coordinates, and observed confounders.
+#' @param caliper
+#' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
+#' Scalar.
+#' @param coords.cols
+#' If the columns of coordinates are not named 'Longitude' and 'Latitude',
+#' coords.columns are the column indeces corresponding to longitude and latitude
+#' accordingly.
+#' @param cov.cols
+#' If the weight is set to 'optimal', standardized difference of means will be
+#' calculated on the columns whose indeces are in cov.cols.
+#' @param cutoff
+#' The cutoff of standardized difference of means under which the covariates are
+#' considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.
+#' @param w_tol
+#' Tolerance on the choice of the optimal weight. Only needed when weight is
+#' 'optimal'. Defaults to 0.05.
+#' @param distance
+#' Function te takes in the distance matrix and returns the standardized distance
+#' matrix. Defaults to the function that subtracks the minimum and divides by the
+#' range.
+#' @param caliper_type
+#' Whether we want the caliper to be on DAPS or on the PS. caliper_type must
+#' either be 'DAPS', or 'PS'.
+#' @param quiet
+#' Whether we want to print the performance of weights.
+#' @param coord_dist
+#' Set to true when we want to use a distance function that calculates the
+#' spherical distance of points instead of Euclidean. Defaults to FALSE.
+#' 
+#' @return List of weight chosen, matched dataset, standardized difference of
+#' the columns in cov.cols, indeces of matched treated and controls.
+#' 
+#' @examples
+#' 
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                     w_tol = 0.05, distance = StandDist, caliper_type,
                     quiet = FALSE, coord_dist = FALSE) {
-  # Function that chooses the optimal weight and fits DAPS.
-  #
-  # Args:
-  #  dataset:       Data frame including treatment, outcome, coordinates,
-  #                 and observed confounders.
-  #  caliper:       A caliper for the DAPS Score difference of matched
-  #                 pairs. Defaults to 0.1. Scalar.
-  #  coords.cols:   If the columns of coordinates are not named 'Longitude'
-  #                 and 'Latitude', coords.columns are the column indeces
-  #                 corresponding to longitude and latitude accordingly.
-  #  cov.cols:      If the weight is set to 'optimal', standardized
-  #                 difference of means will be calculated on the columns
-  #                 whose indeces are in cov.cols.
-  #  cutoff:        The cutoff of standardized difference of means under
-  #                 which the covariates are considered balanced. Specify
-  #                 when weight is set to 'optimal'. Defaults to 0.1.
-  #  w_tol:         Tolerance on the choice of the optimal weight. Only
-  #                 needed when weight is 'optimal'. Defaults to 0.05.
-  #  distance:      Function te takes in the distance matrix and returns
-  #                 the standardized distance matrix. Defaults to the
-  #                 function that subtracks the minimum and divides by
-  #                 the range.
-  #  caliper_type:  Whether we want the caliper to be on DAPS or on the PS.
-  #                 caliper_type must either be 'DAPS', or 'PS'.
-  #  quiet:         Whether we want to print the performance of weights.
-  #  coord_dist:    Set to true when we want to use a distance function that
-  #                 calculates the spherical distance of points instead of
-  #                 euclidean. Defaults to FALSE.
-  #
-  # Returns:
-  #  List of weight chosen, matched dataset, standardized difference of
-  #  the columns in cov.cols, indeces of matched treated and controls.
-  
   
   # What we will return
   r <- NULL
@@ -476,8 +481,6 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
     r$ind_cnt <- daps.opt$ind_cnt
   }
   
-  # Dropping the columns that will not be included.
-  # Outcome and treatment columns have already been renamed.
   lmod <- lm(Y ~ X, data = pairs.daps)
   r$est <- lmod$coef[2]
   
