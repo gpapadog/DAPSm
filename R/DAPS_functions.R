@@ -1,37 +1,25 @@
-#' Linear regression
+#' Matching on distance matrix
 #'
-#' Runs an OLS regression not unlike \code{\link{lm}}
+#' Takes in a matrix and runs through it matching rows to columns with small entries.
+#' The smallest one is matched first, and it continues on.
 #'
-#' @param y response vector (1 x n)
-#' @param X covariate matrix (p x n) with no intercept
+#' @param M       A non-negative matrix (T x C)
+#' @param caliper The caliper controls how far apart with respect to their M entry
+#'                matched pairs can be. When set to NULL, all possible matches with
+#'                finite M entry are taken. If set to a number, no entries are
+#'                allowed to be matched if larger than caliper.
 #'
-#' @return A list with 4 elements: coefficients, vcov, sigma, df
+#' @return An ordered matrix of the row and column indeces that are matched.
 #'
 #' @examples
-#' data(mtcars)
-#' X <- as.matrix(mtcars[, c("cyl", "disp", "hp")])
-#' y <- mtcars[, "mpg"]
-#' linreg(y, X)
+#' set.seed(1)
+#' D <- matrix(rexp(800, rate = 0.5), 20, 40)
+#' MinDistMatch(D, caliper = NULL)
+#' MinDistMatch(D, caliper = 0.1)
 #'
 #' @export
-#'
-#'
-
 MinDistMatch <- function(M, caliper = NULL) {
-  # Function that takes in a matrix M and runs through it matching observations
-  # with small value of M. The smallest one is matched first, and it continues in
-  # such way.
-  #
-  # Args:
-  #
-  #  M:       A non-negative matrix.
-  #  caliper: The caliper controls how far apart with respect to their M
-  #           entry matched pairs can be. When set to NULL, all possible
-  #           matches with finite M entry are taken.
-  #
-  # Returns:
-  #  An ordered matrix of the row and column indeces that are matched.
-  
+
   num_trt <- nrow(M)
   num_con <- ncol(M)
   rownames(M) <- 1:num_trt
@@ -73,6 +61,7 @@ MinDistMatch <- function(M, caliper = NULL) {
   }
   mat <- mat[order(mat[, 1]), ]
   mat <- matrix(as.numeric(mat), ncol = 2, nrow = nrow(mat))
+  colnames(mat) <- c('Row Index', 'Column Index')
   return(mat)
 }
 
