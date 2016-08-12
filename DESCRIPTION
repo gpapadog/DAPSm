@@ -9,3 +9,4 @@ Description: FILL
 License: GPL (>= 2)
 LazyData: TRUE
 URL: https://github.com/gpapadog/DAPSm
+RoxygenNote: 5.0.1
