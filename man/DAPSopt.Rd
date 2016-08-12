@@ -5,7 +5,7 @@
 \title{DAPSm with optimal weight
 Function that chooses the optimal weight and fits DAPSm.}
 \usage{
-DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1, w_tol = 0.05,
+DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1, w_tol = 0.01,
   distance = StandDist, caliper_type, quiet = FALSE, coord_dist = FALSE)
 }
 \arguments{
@@ -25,7 +25,7 @@ calculated on the columns whose indeces are in cov.cols.}
 considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.}
 
 \item{w_tol}{Tolerance on the choice of the optimal weight. Only needed when weight is
-'optimal'. Defaults to 0.05.}
+'optimal'. Defaults to 0.01.}
 
 \item{distance}{Function te takes in the distance matrix and returns the standardized distance
 matrix. Defaults to the function that subtracks the minimum and divides by the
