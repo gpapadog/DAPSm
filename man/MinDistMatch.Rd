@@ -2,26 +2,30 @@
 % Please edit documentation in R/DAPS_functions.R
 \name{MinDistMatch}
 \alias{MinDistMatch}
-\title{Linear regression}
+\title{Matching on distance matrix}
 \usage{
 MinDistMatch(M, caliper = NULL)
 }
 \arguments{
-\item{y}{response vector (1 x n)}
+\item{M}{A non-negative matrix (T x C)}
 
-\item{X}{covariate matrix (p x n) with no intercept}
+\item{caliper}{The caliper controls how far apart with respect to their M entry
+matched pairs can be. When set to NULL, all possible matches with
+finite M entry are taken. If set to a number, no entries are
+allowed to be matched if larger than caliper.}
 }
 \value{
-A list with 4 elements: coefficients, vcov, sigma, df
+An ordered matrix of the row and column indeces that are matched.
 }
 \description{
-Runs an OLS regression not unlike \code{\link{lm}}
+Takes in a matrix and runs through it matching rows to columns with small entries.
+The smallest one is matched first, and it continues on.
 }
 \examples{
-data(mtcars)
-X <- as.matrix(mtcars[, c("cyl", "disp", "hp")])
-y <- mtcars[, "mpg"]
-linreg(y, X)
+set.seed(1)
+D <- matrix(rexp(800, rate = 0.5), 20, 40)
+MinDistMatch(D, caliper = NULL)
+MinDistMatch(D, caliper = 0.1)
 
 }
 
