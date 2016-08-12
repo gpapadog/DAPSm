@@ -189,10 +189,6 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 
 
 
-
-# The only thing that changed in DAPSopt and WeightChoice is that we
-# call NEW_dist.ps instead of DAPS, and we can drop the argument perm.
-
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                     w_tol = 0.05, distance = StandDist, caliper_type,
                     quiet = FALSE, coord_dist = FALSE) {
@@ -482,18 +478,12 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   
   # Dropping the columns that will not be included.
   # Outcome and treatment columns have already been renamed.
-  pairs_small <- FormDataset(pairs.daps, ignore.cols = ignore.cols)
-  est     <- numeric(2)
-  lmod1 <- lm(Y ~ X, data = pairs_small)
-  lmod2 <- lm(Y ~ X + ., data = pairs_small)
-  est[1]  <- lmod1$coef[2]
-  est[2]  <- lmod2$coef[2]
-  
-  r$est <- est
+  lmod <- lm(Y ~ X, data = pairs.daps)
+  r$est <- lmod$coef[2]
   
   if (!is.null(true_value)) {
-    se_est <- c(summary(lmod1)$coef[2, 2], summary(lmod2)$coef[2, 2])
-    r$cover <- (abs(true_value) - est < qnorm(0.975) * se_est)
+    se_est <- summary(lmod)$coef[2, 2]
+    r$cover <- (abs(true_value) - r$est < qnorm(0.975) * se_est)
   }
   
   if (pairsRet) {
