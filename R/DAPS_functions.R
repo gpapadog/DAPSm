@@ -15,6 +15,7 @@
 #'
 #' @export
 #'
+#'
 
 MinDistMatch <- function(M, caliper = NULL) {
   # Function that takes in a matrix M and runs through it matching observations
