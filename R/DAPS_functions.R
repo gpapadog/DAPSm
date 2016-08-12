@@ -67,8 +67,6 @@ MinDistMatch <- function(M, caliper = NULL) {
 
 
 
-
-
 #' The central DAPS function
 #'
 #' Takes in a two data frames one with treatment and one with control units
@@ -208,7 +206,7 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.
 #' @param w_tol
 #' Tolerance on the choice of the optimal weight. Only needed when weight is
-#' 'optimal'. Defaults to 0.05.
+#' 'optimal'. Defaults to 0.01.
 #' @param distance
 #' Function te takes in the distance matrix and returns the standardized distance
 #' matrix. Defaults to the function that subtracks the minimum and divides by the
@@ -228,7 +226,7 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' @examples
 #' 
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
-                    w_tol = 0.05, distance = StandDist, caliper_type,
+                    w_tol = 0.01, distance = StandDist, caliper_type,
                     quiet = FALSE, coord_dist = FALSE) {
   
   # What we will return
@@ -282,47 +280,52 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 }
 
 
+
+#' The central DAPS optimal function
+#' 
+#' Performs DAPS and checks whether balance of the covariates has been achieved,
+#' and chooses the next weight that should be checked.
+#' 
+#' @param dataset
+#' Data frame including treatment, outcome, coordinates, propensity score
+#' estimates (named prop.scores) and observed confounders.
+#' @param caliper
+#' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
+#' @param coords.cols
+#' If the columns of coordinates are not named 'Longitude' and 'Latitude',
+#' coords.columns are the column indeces corresponding to longitude and latitude
+#' accordingly.
+#' @param cov.cols
+#' If the weight is set to 'optimal', standardized difference of means will be
+#' calculated on the columns whose indeces are in cov.cols.
+#' @param cutoff
+#' The cutoff of standardized difference of means under which the covariates are
+#' considered balanced. Defaults to 0.1.
+#' @param interval
+#' The interval in which we are testing the weight. DAPS is fit in the middle of
+#' the interval and depending on whether balance is achieved in the middle, the
+#' function chooses the left or right half as the next interval in the iterative
+#' procedure.
+#' @param distance
+#' Function that takes in the distance matrix and returns the standardized
+#' distance matrix. Defaults to the funcion that subtracks the minimum and
+#' divides by the range.
+#' @param caliper_type
+#' Whether we want the caliper to be on DAPS or on the PS. caliper_type must be
+#' either 'DAPS', or 'PS'.
+#' @param coord_dist
+#' Set to true when we want to use a distance function that calculates the
+#' spherical distance of points instead of Euclidean. Defaults to FALSE.
+#' 
+#' @return List of next interval, matched dataset, standardized difference of
+#' the columns in cov.cols, indeces of matched treated and controls, and whether
+#' balance was achieved.
+#' 
+#' @examples 
 WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
                          caliper_type, coord_dist = FALSE) {
-  # Function that performs DAPS and checks whether balance of the
-  # covariates has been achieved, and chooses the next weight that
-  # should be checked.
-  #
-  # Args:
-  #  dataset:      Data frame including treatment, outcome, coordinates,
-  #                and observed confounders.
-  #  caliper:      A caliper for the DAPS Score difference of matched
-  #                pairs. Defaults to 0.1. Scalar.
-  #  coords.cols:  If the columns of coordinates are not named 'Longitude'
-  #                and 'Latitude', coords.columns are the column indeces
-  #                corresponding to longitude and latitude accordingly.
-  #  cov.cols:     If the weight is set to 'optimal', standardized
-  #                difference of means will be calculated on the columns
-  #                whose indeces are in cov.cols.
-  #  cutoff:       The cutoff of standardized difference of means under
-  #                which the covariates are considered balanced. Specify
-  #                when weight is set to 'optimal'. Defaults to 0.1.
-  #  interval:     The interval in which we are testing the weight. DAPS
-  #                is fit in the middle of the interval and depending on
-  #                whether balance is achieved in the middle, the
-  #                function chooses the left or right half as the next
-  #                interval in the iterative procedure.
-  #  distance:     Function te takes in the distance matrix and returns
-  #                the standardized distance matrix. Defaults to the
-  #                funcion that subtracks the minimum and divides by
-  #                the range.
-  #  caliper_type: Whether we want the caliper to be on DAPS or on the PS.
-  #                caliper_type must either be 'DAPS', or 'PS'.
-  #  coord_dist:   Set to true when we want to use a distance function that
-  #                calculates the spherical distance of points instead of
-  #                euclidean. Defaults to FALSE.
-  #
-  # Returns:
-  #  List of next interval, matched dataset, standardized difference of
-  #  the columns in cov.cols, indeces of matched treated and controls,
-  #  and whether balance was achieved.
-  
+
   r <- NULL
   
   stand_diff <- rep(cutoff + 1, length(cov.cols))
@@ -374,74 +377,79 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 
 
 
+#' Fitting DAPSm with fixed or optimal weight
+#' 
+#' Function that fits DAPS by choosing the 'optimal' weight, or using the weight
+#' specified and returns the causal effect estimate under a specification of
+#' caliper. If the weight is set to 'optimal', the optimal weight is chosen as
+#' the smallest weight that satisfies standardized difference less than a cutoff.
+#' For computational reasons, we do not fit DAPS on a lot of weights, but perform
+#' an iterative algorithm to identify the optimal w.
+#' 
+#' @param dataset
+#' Data frame including treatment, outcome, coordinates, propensity score
+#' estimates (named prop.scores) and observed confounders.
+#' @param out.col 
+#' If outcome column name is not 'Y', out.col should be the index of the outcome
+#' column.
+#' @param trt.col
+#' If treatment is not named 'X', trt.col should be set to the index of the
+#' treatment column.
+#' @param caliper
+#' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
+#' @param weight
+#' Scalar between 0 and 1 or should be set to 'optimal'. Describes the percent
+#' of weight to be given on PS difference. 1 - weight is given to standardized
+#' distance. If set to 'optimal', the 'optimal' weight is chosen. Defaults to
+#' 'optimal'.
+#' @param coords.columns
+#' If the columns of coordinates are not named 'Longitude' and 'Latitude',
+#' coords.columns are the column indeces corresponding to longitude and latitude
+#' accordingly.
+#' @param ignore.col
+#' All column indeces that should not be included in the linear model. Often,
+#' this should be set to all columns indeces corresponding to columns other than
+#' outcome, treatment, and observed confounders.
+#' @param pairsRet
+#' Whether we want to return the information on the matched pairs. Logical.
+#' Defaults to FALSE.
+#' @param cov.cols
+#' If the weight is set to 'optimal', standardized difference of means will be
+#' calculated on the columns whose indeces are in cov.cols.
+#' @param cutoff
+#' The cutoff of standardized difference of means under which the covariates are
+#' considered balanced. Defaults to 0.1.
+#' @param w_tol
+#' Tolerance on the choice of the optimal weight. Only needed when weight is
+#' 'optimal'. Defaults to 0.01.
+#' @param distance
+#' Function that takes in the distance matrix and returns the standardized
+#' distance matrix. Defaults to the funcion that subtracks the minimum and
+#' divides by the range.
+#' @param caliper_type
+#' Whether we want the caliper to be on DAPS or on the PS. caliper_type must be
+#' either 'DAPS', or 'PS'.
+#' @param quiet
+#' Whether we want to print the choice of weight in DAPS optimal. Defauls to TRUE.
+#' @param coord_dist
+#' Set to true when we want to use a distance function that calculates the
+#' spherical distance of points instead of Euclidean. Defaults to FALSE.
+#' @param true_value
+#' Numeric. If provided, an indicator of whether the CI covers the true value is
+#' returned.
+#' 
+#' @return A list including: the estimate of the causal effect, and potential
+#' standardized difference of means, optimal weight chosen, information on matched
+#' pairs.
+#' 
+#' @examples
+#' 
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     weight = 'optimal', coords.columns = NULL, ignore.cols = NULL,
-                    pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.05,
+                    pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
                     distance = StandDist, caliper_type, quiet = FALSE,
                     coord_dist = FALSE, true_value = NULL) {
-  
-  # Function that fits DAPS by choosing the 'optimal' weight, or using
-  # the weight specified and returns the causal effect estimate under a
-  # specification of caliper. If the weight is set to 'optimal', the
-  # optimal weight is chosen as the smallest weight that satisfies
-  # standardized difference less than a cutoff. For computational reasons,
-  # we do not fit DAPS on a lot of weights, but perform an iterative
-  # algorithm to identify the optimal w.
-  #
-  # Args:
-  #  dataset:       Data frame including treatment, outcome, coordinates,
-  #                 and observed confounders.
-  #  out.col:       If outcome column name is not 'Y', out.col should be
-  #                 the index of the outcome column.
-  #  trt.col:       If treatment is not named 'X', trt.col should be set
-  #                 to the index of the treatment column.
-  #  caliper:       A caliper for the DAPS Score difference of matched
-  #                 pairs. Defaults to 0.1. Scalar.
-  #  weight:        Scalar between 0 and 1 or should be set to 'optimal'.
-  #                 Describes the percent of weight to be given on PS
-  #                 difference. 1 - weight is given to standardized
-  #                 distance. If set to 'optimal', the 'optimal' weight is
-  #                 chosen. Defaults to 'optimal'.
-  #  coords.columns:If the columns of coordinates are not named 'Longitude'
-  #                 and 'Latitude', coords.columns are the column indeces
-  #                 corresponding to longitude and latitude accordingly.
-  #  ignore.cols:   All column indeces that should not be included in the
-  #                 linear model. Often, this should be set to all columns
-  #                 indeces corresponding to columns other than outcome,
-  #                 treatment, and observed confounders.
-  #  pairsRet:      Whether we want to return the information on the
-  #                 matched pairs. Logical. Defaults to FALSE.
-  #  cov.cols:      If the weight is set to 'optimal', standardized
-  #                 difference of means will be calculated on the columns
-  #                 whose indeces are in cov.cols.
-  #  cutoff:        The cutoff of standardized difference of means under
-  #                 which the covariates are considered balanced. Specify
-  #                 when weight is set to 'optimal'. Defaults to 0.1.
-  #  w_tol:         Tolerance on the choice of the optimal weight. Only
-  #                 needed when weight is 'optimal'. Defaults to 0.05.
-  #  distance:      Function te takes in the distance matrix and returns
-  #                 the standardized distance matrix. Defaults to the
-  #                 function that subtracks the minimum and divides by the
-  #                 range.
-  #  caliper_type:  Whether we want the caliper to be on DAPS or on the PS.
-  #                 caliper_type must either be 'DAPS', or 'PS'.
-  #  quiet:         Whether we want to print the choice of weight in DAPS
-  #                 optimal. Defauls to TRUE.
-  #  coord_dist:    Set to true when we want to use a distance function that
-  #                 calculates the spherical distance of points instead of
-  #                 euclidean. Defaults to FALSE.
-  #  true_value:    Numeric. If provided, an indicator of whether the CI covers
-  #                 the true value is returned.
-  #
-  # Returns:
-  #  A list. The first element of the list is a vector of length 2. The
-  #  first element of the vector is the causal effect estimated from a
-  #  linear model on the matched pairs, adjusting for no observed
-  #  confounding. The second element is the causal effect estimate from
-  #  a linear model on the DAPS matched pairs that adjusts for all
-  #  covariates that are not in ignore.cols. The second element of the
-  #  list is a matrix of information on the matched pairs.
-  
+
   # What we return.
   r <- NULL
   
