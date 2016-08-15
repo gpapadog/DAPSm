@@ -142,6 +142,11 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' After using CalcDAPSWeightBalance() to calculate the balance of covariates for
 #' varying values of w, we can choose the w that acheives the optimal crieterion.
 #'
+#' @param dataset
+#' The dataset that was supplied to CalcDAPSWeightBalance() for calculating
+#' balance.
+#' @param out.col
+#' The index of the outcome column if it is not named 'Y' in the dataset.
 #' @param balance
 #' A 3-dimensional array including the SDM. First dimension is equal to length
 #' of weights, second dimension is equal to two corresponding to before and
@@ -149,30 +154,35 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' of the list from the function CalcDAPSWeightBalance().
 #' @param cutoff
 #' The cutoff that is used for ASDM.
-#' @param dataset
-#' The dataset that was supplied to CalcDAPSWeightBalance() for calculating
-#' balance.
-#' @param pairs.
-#' The value of the x axis where the full data balance will be plotted. Defaults
-#' to - 3.
+#' @param pairs
+#' A list where each element corresponds to a weight. Each element is a vector
+#' including the row indices of the dataset that are included in the matched
+#' dataset for each weight w. 2nd element of the list returned by
+#' CalcDAPSWeightBalance().
+#' @param full_pairs
+#' A list where each element corresponds to a weight. Includes the basic info
+#' about the matched pairs. Returned by CalcDAPSWeightBalance() as full_pairs.
+#' Can be left NULL.
+#' @param distance_DAPS
+#' Numeric of length equal to the number of weights. Mean distance of DAPS
+#' matches. Can be left NULL. Or use distance_DAPS of CalcDAPSWeightBalance().
 #' @param weights
-#' The vector of weights. Will be used to make the xlab.
-#' @param cutoff
-#' Vertical lines of cutoff used.
-#' @param axis_cex
-#' The size of the xaxis. Defaults to 1.
-#' @param mar
-#' Plot margins. Defaults to c(4, 4, 2, 8).
-#' @param inset
-#' Inset of the legend Defaults to - 0.1.
-#' @param ylimit
-#' The limit of the y axis.
+#' The weights that we used to fit DAPSm.
+#' 
+#' @return A list of: CE estimate and standard error from a linear model
+#' including only the matched pairs for the optimal w, the number of matches,
+#' mean distance of pairs if distance_DAPS is specified, balance of observed
+#' covariates, the chosen weight, and info on the matched pairs if full_pairs
+#' is specified.
 #' 
 #' @example
 #' @export
-DAPSchoiceModel <- function(balance, cutoff, dataset, pairs, full_pairs,
-                            distance_DAPS, num_match_DAPS, out.col) {
+DAPSchoiceModel <- function(dataset, out.col = NULL, balance, cutoff, pairs,
+                            full_pairs = NULL, distance_DAPS = NULL, weights) {
   
+  if (is.null(out.col)) {
+    out.col <- which(names(dataset) == 'Y')
+  }
   out_name <- names(dataset)[out.col]
   
   r <- NULL
@@ -181,13 +191,16 @@ DAPSchoiceModel <- function(balance, cutoff, dataset, pairs, full_pairs,
   lmod <- lm(as.formula(paste(out_name, '~ SnCR')), data = dataset[pairs[[wh]], ])
   r$est <- lmod$coef[2]
   r$se <- summary(lmod)$coef[2, 2]
-  r$distance <- distance_DAPS[wh]
-  r$num_match <- num_match_DAPS[wh] / 2
+  r$num_match <- length(pairs[[wh]]) / 2
+  
+  if (!is.null(distance_DAPS)) {
+    r$distance <- distance_DAPS[wh]
+  }
   r$balance <- balance[wh, , ]
   r$weight <- weights[wh]
-  r$pairs <- full_pairs[[wh]]
-  
-  r$balance_plots <- GetBalancePlots(dataset, pairs[[wh]])
+  if (!is.null(full_pairs)) {
+    r$pairs <- full_pairs[[wh]]
+  }
   
   return(r)
 }
