@@ -35,7 +35,10 @@ accordingly.}
 Defaults to FALSE.}
 
 \item{cov.cols}{If the weight is set to 'optimal', standardized difference of means will be
-calculated on the columns whose indices are in cov.cols.}
+calculated on the columns whose indices are in cov.cols. If the weight is set
+to a numeric value, then cov.cols can be left NULL, or it can be used if we
+want the function to return the standardized difference of means of the columns
+with indices in cov.cols.}
 
 \item{cutoff}{The cutoff of standardized difference of means under which the covariates are
 considered balanced. Defaults to 0.1.}
