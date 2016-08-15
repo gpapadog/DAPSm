@@ -80,10 +80,18 @@ We are now ready to fit DAPSm to the data. The arguments on the function are des
 
 # Choosing the optimal $w$ - 2$^{nd}$ option
 
-As mentioned before the optimal weight algorithm is a fast search for the optimal $w$ defined as the minimum $w$ for which the absolute standardized difference of means (ASDM) of observed covariates is less than a cutoff. The fast search defined above is based on the assumption that ASDM is decreasing as more and more matching weight is given to the propensity score (increasing $w$).
+As mentioned before the optimal weight algorithm described above is a fast search for the optimal $w$ defined as the minimum $w$ for which the absolute standardized difference of means (ASDM) of observed covariates is less than a cutoff. This might be appropriate for very large data sets for which performing an extensive search for the optimal value of $w$ is not feasible. The fast search defined above is based on the assumption that ASDM is decreasing as more and more matching weight is given to the propensity score (increasing $w$).
 
 However, it is often the case that this might not be true. For example, if one of the observed covariates in our data set is spatially structured, then distance might work adequately to balance it, and therefore the trend of ASDM as a function of $w$ will not necessarily be decreasing.
 
 For that reason, we suggest a second option for calculating the optimal $w$. This algorithm still defines the optimal $w$ as the minimum $w$ for which ASDM of all covariates is below a cutoff. However, one can instead scan multiple values of $w$ ranging from 0 to 1, and specificly choose the smallest one that acheives balance.
+
+## Algorithm 2 for choosing the optimal weight
+
+- Algorithm 2 performs DAPSm for a set of weights. Allowing weights to vary from 0 to 1 we can explicitely calculate the ASDM of all observed covariates as a function of the weight $w$. This is performed in the function ```CalcDAPSWeightBalance()```.
+- After we have calculated the standardized difference of means of all covariates as a function of $w$, we can use the function ```PlotWeightBalance()``` to plot the standardized difference of means as a function of $w$.
+- Afterwards, we can use the function ```DAPSchoiceModel()``` to choose the optimal $w$ and acquire the effect estimates and set of matched pairs.
+- Lastly, the function ```DAPSWeightCE()``` plots the estimates for the varying values of $w$, along with 95% confidence intervals and loess smoothing curve. This should NOT be used to choose the value of $w$ that will be reported.
+
 
 

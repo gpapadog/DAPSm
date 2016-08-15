@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Georgia Papadogeorgou" />
+
+<meta name="date" content="2016-08-15" />
+
+<title>DAPSest</title>
+
+
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">DAPSest</h1>
+<h4 class="author"><em>Georgia Papadogeorgou</em></h4>
+<h4 class="date"><em>2016-08-15</em></h4>
+</div>
+
+
+<p>DAPSest is a function that can be used to perform Distance Adjusted Propensity Score Matching.</p>
+<div id="why-use-it" class="section level3">
+<h3>Why use it:</h3>
+<ul>
+<li>In the presence of spatial confounding, encouraging matches of pairs to be geographically close can improve balance of spatial covariates and reduce confounding bias, even if these covariates are not measured.</li>
+<li>DAPSm combines propensity scores and spatial proximity of a treated-control pair in a new matching score, called Distance Adjusted Propensity Score (DAPS). For a treated unit <span class="math">\(i\)</span> and a control unit <span class="math">\(j\)</span>, DAPS is defined as <span class="math">\[ DAPS_{ij} = w * |PS_i - PS_j| + (1-w) * Dist_{ij} \]</span> where <span class="math">\(PS_i, PS_j\)</span> are the propensity score estimates from a previously fitted model of the binary treatment <span class="math">\(Z\)</span> on the observed covariates <strong>X</strong>, and <span class="math">\(Dist_{ij}\)</span> is the standardized geographical distance of units <span class="math">\(i, j\)</span>.</li>
+</ul>
+</div>
+<div id="what-are-the-situations-that-dapsm-should-be-used" class="section level3">
+<h3>What are the situations that DAPSm should be used?</h3>
+<ul>
+<li>DAPSm can be used to balance measured or unmeasured spatial confounders.</li>
+<li>For example, consider
+<ul>
+<li><span class="math">\(X_1, X_2 \sim N(0, 1)\)</span></li>
+<li><span class="math">\(U \sim GP(0, W)\)</span> where <span class="math">\(W\)</span> is a spatial correlation matrix (points closer to each other have more similar values of <span class="math">\(U\)</span>)</li>
+<li><span class="math">\(Z\)</span> is binary generated from a model where <span class="math">\(X_1, X_2, U\)</span> are all predictors, i.e. <span class="math">\[ logit P(Z = 1) = U + X_1 + X_2 \]</span></li>
+<li>The outcome <span class="math">\(Y\)</span> is generated from a model where <span class="math">\(X_1, X_2, U, Z\)</span> are all predictors, i.e. <span class="math">\[ Y \sim N(Z + U + X_1 + X_2, \sigma^2) \]</span></li>
+</ul></li>
+<li>In the situation above <span class="math">\(U\)</span> is a spatial variable and a confounder of the <span class="math">\(Z-Y\)</span> relationship.</li>
+<li>Using DAPSm can reduce bias from missing <span class="math">\(U\)</span>.</li>
+</ul>
+</div>
+<div id="fitting-dapsm" class="section level1">
+<h1>Fitting DAPSm</h1>
+<div id="before-dapsest" class="section level2">
+<h2>Before DAPSest</h2>
+<ul>
+<li>Assume that we have a dataset with a binary treatment <span class="math">\(Z\)</span>, continuous outcome <span class="math">\(Y\)</span> and a set of observed suspected confounders <strong>X</strong>.</li>
+<li>Fit a model to predict the propensity scores of all units using only the observed covariates <strong>X</strong>. Such a model could be <code>glm(Z ~ X, data = dataset, family = binomial)</code>.</li>
+<li>Acquire the propensity score estimates from your favorite propensity score model and save them as <code>prop.scores</code> in the data frame of observations.</li>
+<li>Ensure that your data frame includes information on the treatment, outcome, covariates, coordinates (longitude, latitude), and propensity score estimates.</li>
+</ul>
+</div>
+<div id="using-dapsest" class="section level2">
+<h2>Using DAPSest</h2>
+<p>We are now ready to fit DAPSm to the data. The arguments on the function are described here in detail:</p>
+<ul>
+<li><code>dataset</code>: This is a data frame where each row is an observation including all the information described above (treatment, outcome, covariates, coordinates and propensity score estimates as “prop.scores”).</li>
+<li><code>out.col</code>: If the data frame includes the outcome column as ‘Y’, then this does not need to be specified. If not, set out.col equal to the index of the data frame that includes the outcome information.</li>
+<li><code>trt.col</code>: If the treatment is included in the data frame with the name ‘X’, this argument does not need to be specified. If not, set trt.col to the column index that includes the binary treatment information.</li>
+<li><code>caliper</code>: The caliper that will be used for matching.</li>
+<li><code>weight</code>: This corresponds to the <span class="math">\(w\)</span> argument in the definition of DAPS. Higher values of weight correspond to matching score based more on the propensity score difference, and less on proximity.
+<ul>
+<li>Set weight to a specific value if you have a prior belief of the relative importance of propensity scores and proximity.</li>
+<li>Otherwise, set weight equal to ‘optimal’. This will perform a procedure that chooses <span class="math">\(w\)</span> as the minimum <span class="math">\(w\)</span> for which balance of observed covariates is achieved. However, for computational efficiency the optimal algorithm assumes that the absolute standardized difference of means (ASDM) of observed covariates is a decreasing function of <span class="math">\(w\)</span>. The algorithm initiates at 0.5 and checks balance. If balance is achieved, the algorithm moves to 0.25. If not, it moves to 0.75. The algorithm suggests smaller or larger values by <span class="math">\(1/2^{n + 1}\)</span> where <span class="math">\(n\)</span> is the iteration number depending on whether balance was or was not achieved accordingly. It stops when the interval size is less than a tolerance level.</li>
+</ul></li>
+<li><code>coords.columns</code>: If the column names corresponding to the coordinates are named ‘Longitude’ and ‘Latitude’ this does not need to be specified. Otherwise, set coords.columns to be the indeces of the coordinate columns.</li>
+<li><code>pairsRet</code>: Logical. If set to TRUE, a matrix of information on the matched pairs will be returned. This will include unit IDs, coordinate, treatment, outcome and propensity score of the matched pairs. Each matched pair corresponds to a row, so we can identify which treated is matched to which control.</li>
+<li><code>cov.cols</code>: Specify this if the weight is set to ‘optimal’. Otherwise, it will be ignored. This argument described the indices of the columns that include observed covariates. In the case of the optimal weight choice, the algorithm will ensure that the variables with indices in cov.cols are balanced.</li>
+<li><code>cutoff</code>: The cutoff of ASDM below which a variable is balanced. Only required when the weight is set to ‘optimal’.</li>
+<li><code>w_tol</code>: Specify when <code>weight = 'optimal'</code>. This specifies how big is our tolernace with the choice of the optimal <span class="math">\(w\)</span>. If <code>w_tol</code> is small, then more iterations will be needed to choose the final value of <span class="math">\(w\)</span>.</li>
+<li><code>coord_dist</code>: Logical. If set to TRUE geo-distance will be calculated from the longitude and latitude information given in the dataset. If set to FALSE, Euclidean distance will be calculated instead.</li>
+<li><code>distance</code>: Function. Since the propensity score difference and distance are combined into one quantity (DAPS), they should be on similar scales. For example, distance values that are too large would dominate over the definitiono of DAPS. For that reason, <code>distance</code> needs to be specified as a function that takes in a matrix of arbitrarily large distances and turns it into a matrix of elements scaled to the propensity score difference scale. The package includes two choices (but any other function would also work):
+<ul>
+<li><code>StandDist</code>: This function takes in a distance matrix with entries <span class="math">\(d_{ij}\)</span> and returns a matrix with corresponding entries <span class="math">\[ D_{ij} = \frac{d_{ij} - min_{ij}d_{ij}}{max_{ij}d_{ij} - min_{ij}d_{ij}} \]</span></li>
+<li><code>EmpCDF</code>: This function takes in a distance matrix with entries <span class="math">\(d_{ij}\)</span> and returns a matrix with corresponding values equal to the empirical cdf of <span class="math">\(d\)</span>.</li>
+<li>Both these functions standardize distance to be between 0 and 1.</li>
+</ul></li>
+<li><code>caliper_type</code>: Should be ‘DAPS’ or ‘PS’. This specifies which quantity we want to set the caliper on.
+<ul>
+<li>Setting the caliper on ‘DAPS’ will avoid matches for which the DAPS value is greater than some cutoff $ caliper * sd(DAPS) $.</li>
+<li>Otherwise, we can set the caliper only on the propensity score differences by setting <code>caliper_type = 'PS'</code>.</li>
+<li>The first option has performed best in simulations.</li>
+</ul></li>
+<li><code>quiet</code>: In the case where weight is set to optimal, the quiet argument controls whether we want the algorithm to print the current stage of the optimal <span class="math">\(w\)</span> search. Defaults to FALSE.</li>
+<li><code>true_value</code>: If used, an indicator is returned set to TRUE if the confidence interval includes the true value, or FALSE if it doesn’t.</li>
+</ul>
+</div>
+<div id="after-dapsest" class="section level2">
+<h2>After DAPSest</h2>
+<ul>
+<li>Covariate balance should be checked for before and after matching.</li>
+<li>Plots of covariates after matching should be used in addition to the ASDM that the algorithm uses to ensure balance.</li>
+</ul>
+</div>
+</div>
+<div id="choosing-the-optimal-w---2nd-option" class="section level1">
+<h1>Choosing the optimal <span class="math">\(w\)</span> - 2<span class="math">\(^{nd}\)</span> option</h1>
+<p>As mentioned before the optimal weight algorithm described above is a fast search for the optimal <span class="math">\(w\)</span> defined as the minimum <span class="math">\(w\)</span> for which the absolute standardized difference of means (ASDM) of observed covariates is less than a cutoff. This might be appropriate for very large data sets for which performing an extensive search for the optimal value of <span class="math">\(w\)</span> is not feasible. The fast search defined above is based on the assumption that ASDM is decreasing as more and more matching weight is given to the propensity score (increasing <span class="math">\(w\)</span>).</p>
+<p>However, it is often the case that this might not be true. For example, if one of the observed covariates in our data set is spatially structured, then distance might work adequately to balance it, and therefore the trend of ASDM as a function of <span class="math">\(w\)</span> will not necessarily be decreasing.</p>
+<p>For that reason, we suggest a second option for calculating the optimal <span class="math">\(w\)</span>. This algorithm still defines the optimal <span class="math">\(w\)</span> as the minimum <span class="math">\(w\)</span> for which ASDM of all covariates is below a cutoff. However, one can instead scan multiple values of <span class="math">\(w\)</span> ranging from 0 to 1, and specificly choose the smallest one that acheives balance.</p>
+<div id="algorithm-2-for-choosing-the-optimal-weight" class="section level2">
+<h2>Algorithm 2 for choosing the optimal weight</h2>
+<ul>
+<li>Algorithm 2 performs DAPSm for a set of weights. Allowing weights to vary from 0 to 1 we can explicitely calculate the ASDM of all observed covariates as a function of the weight <span class="math">\(w\)</span>. This is performed in the function <code>CalcDAPSWeightBalance()</code>.</li>
+<li>After we have calculated the standardized difference of means of all covariates as a function of <span class="math">\(w\)</span>, we can use the function <code>PlotWeightBalance()</code> to plot the standardized difference of means as a function of <span class="math">\(w\)</span>.</li>
+<li>Afterwards, we can use the function <code>DAPSchoiceModel()</code> to choose the optimal <span class="math">\(w\)</span> and acquire the effect estimates and set of matched pairs.</li>
+<li>Lastly, the function <code>DAPSWeightCE()</code> plots the estimates for the varying values of <span class="math">\(w\)</span>, along with 95% confidence intervals and loess smoothing curve. This should NOT be used to choose the value of <span class="math">\(w\)</span> that will be reported.</li>
+</ul>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
