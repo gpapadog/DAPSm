@@ -219,7 +219,6 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' the columns in cov.cols, indices of matched treated and controls.
 #' 
 #' @examples
-#' 
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                     w_tol = 0.01, distance = StandDist,
                     caliper_type = c('DAPS', 'PS'),
@@ -507,10 +506,10 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   
   lmod <- lm(Y ~ X, data = pairs.daps)
   r$est <- lmod$coef[2]
+  r$se <- summary(lmod)$coef[2, 2]
   
   if (!is.null(true_value)) {
-    se_est <- summary(lmod)$coef[2, 2]
-    r$cover <- (abs(true_value) - r$est < qnorm(0.975) * se_est)
+    r$cover <- (abs(true_value) - r$est < qnorm(0.975) * r$se)
   }
   
   if (pairsRet) {
