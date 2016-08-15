@@ -98,22 +98,16 @@ MinDistMatch <- function(M, caliper = NULL) {
 #' @return A dataframe, where each row corresponds to each treated unit, and
 #' includes: the control unit to which it was matched, their propensity score
 #' difference, their DAPS difference, their distance, their standardized distance.
+#' NAs in the data frame correspond to units that were not matched.
 #'
 #' @examples
-#' set.seed(1)
-#' long <- seq(0, 1, by = 0.01)
-#' coords <- expand.grid(long = long, lat = long)
-#' coords <- coords[sample(1:nrow(coords), 200), ]
-#' X <- matrix(rnorm(3 * nrow(coords)), nrow(coords), 3)
-#' p <- 1 / (1 + exp(- X %*% c(1, -2, 1.7) - coords[, 1] ^ 2 - coords[, 2]))
-#' Z <- rbinom(nrow(coords), 1, prob = p)
-#' glmod <- glm(Z ~ X, family = binomial)
-#' dat <- cbind(Longitude = coords[, 1], Latitude = coords[, 2],
-#'              prop.scores = glmod$fitted.values, Trt = Z)
-#' dat <- as.data.frame(dat)
-#' rownames(dat) <- 1:nrow(dat)
-#' daps <- dist.ps(treated = dat[dat$Trt == 1, ], control = dat[dat$Trt == 0, ],
-#'                 caliper_type = 'DAPS', caliper = 1)
+#' data('toyData')
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' daps <- dist.ps(treated = toyData[toyData$Z == 1, ],
+#'                 control = toyData[toyData$Z == 0, ],
+#'                 caliper_type = 'DAPS', caliper = 1,
+#'                 coords.columns = c(4, 5))
 #' head(daps)
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
@@ -186,7 +180,8 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' Function that chooses the optimal weight and fits DAPSm.
 #' 
 #' @param dataset
-#' Data frame including treatment, outcome, coordinates, and observed confounders.
+#' Data frame including treatment, outcome, coordinates, observed confounders,
+#' and propensity score estimates as 'prop.scores'.
 #' @param caliper
 #' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
 #' Scalar.
@@ -200,6 +195,8 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' @param cutoff
 #' The cutoff of standardized difference of means under which the covariates are
 #' considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.
+#' @param trt.col The index of the column in the dataset including the binary
+#' treatment. Necessary when the column is not named 'X'.
 #' @param w_tol
 #' Tolerance on the choice of the optimal weight. Only needed when weight is
 #' 'optimal'. Defaults to 0.01.
@@ -220,19 +217,28 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' the columns in cov.cols, indices of matched treated and controls.
 #' 
 #' @examples
+#' data('toyData')
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' daps_opt <- DAPSopt(toyData, caliper = 0.5, coords.cols = c(4, 5),
+#'                     cov.cols = 6:8, trt.col = 1)
+#' class(daps_opt)
+#' names(daps_opt)
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
-                    w_tol = 0.01, distance = StandDist,
+                    trt.col = NULL, w_tol = 0.01, distance = StandDist,
                     caliper_type = c('DAPS', 'PS'),
                     quiet = FALSE, coord_dist = FALSE) {
   
   caliper_type <- match.arg(caliper_type)
   
+  dataset <- FormDataset(dataset, trt.col = trt.col, out.col = NULL,
+                         ignore.cols = NULL)
   # What we will return
   r <- NULL
   
   interval <- c(0, 1)
   
-  while ((interval[2] - interval[1]) > (w_tol * 2)) {
+  while ((interval[2] - interval[1]) > (w_tol / 2)) {
     if (!quiet) {
       print(interval)
     }
@@ -273,7 +279,6 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
     r$ind_trt <- as.numeric(names(pairs.out))
     r$ind_cnt <- as.numeric(pairs.out)
   }
-  
   return(r)
 }
 
