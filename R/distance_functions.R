@@ -26,8 +26,7 @@ EmpCDF <- function(x) {
   # Returns:
   #  Matrix of the same dimensions as x with empirical cdf.
   
-  require(stats)
-  y <- ecdf(x)(x)
+  y <- stats::ecdf(x)(x)
   y <- matrix(y, nrow = nrow(x), ncol = ncol(x))
   return(y)
 }
