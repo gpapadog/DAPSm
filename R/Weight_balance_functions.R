@@ -207,7 +207,30 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, balance, cutoff, pairs,
 
 
 
-DAPSWeightCE <- function(dataset, weights, pairs, chosen_w, out.col) {
+#' Plot the effect estimate as a function of w.
+#'
+#' Plotting the effect estimate from various fit of DAPSm for varying w. The
+#' chosen w will be the only red dot. A loess curve is fit to the effect
+#' estimates.
+#'
+#' @param dataset
+#' The dataset that was supplied to CalcDAPSWeightBalance() for calculating
+#' balance.
+#' @param out.col
+#' The index of the outcome column if it is not named 'Y' in the dataset.
+#' @param weights
+#' The weights that we used to fit DAPSm.
+#' @param pairs
+#' A list where each element corresponds to a weight. Each element is a vector
+#' including the row indices of the dataset that are included in the matched
+#' dataset for each weight w. 2nd element of the list returned by
+#' CalcDAPSWeightBalance().
+#' @param chosen_w
+#' The weight value that was chosen by DAPSchoiceModel().
+#' 
+#' @example
+#' @export
+DAPSWeightCE <- function(dataset, out.col, weights, pairs, chosen_w) {
   
   out_name <- names(dataset)[out.col]
   
