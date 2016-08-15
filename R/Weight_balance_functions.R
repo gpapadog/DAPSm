@@ -137,7 +137,39 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 
 
 
-
+#' Choosing the optimal weight and fitting the corresponding DAPSm.
+#'
+#' After using CalcDAPSWeightBalance() to calculate the balance of covariates for
+#' varying values of w, we can choose the w that acheives the optimal crieterion.
+#'
+#' @param balance
+#' A 3-dimensional array including the SDM. First dimension is equal to length
+#' of weights, second dimension is equal to two corresponding to before and
+#' after matching, and third dimension is the covariates. Returned as an element
+#' of the list from the function CalcDAPSWeightBalance().
+#' @param cutoff
+#' The cutoff that is used for ASDM.
+#' @param dataset
+#' The dataset that was supplied to CalcDAPSWeightBalance() for calculating
+#' balance.
+#' @param pairs.
+#' The value of the x axis where the full data balance will be plotted. Defaults
+#' to - 3.
+#' @param weights
+#' The vector of weights. Will be used to make the xlab.
+#' @param cutoff
+#' Vertical lines of cutoff used.
+#' @param axis_cex
+#' The size of the xaxis. Defaults to 1.
+#' @param mar
+#' Plot margins. Defaults to c(4, 4, 2, 8).
+#' @param inset
+#' Inset of the legend Defaults to - 0.1.
+#' @param ylimit
+#' The limit of the y axis.
+#' 
+#' @example
+#' @export
 DAPSchoiceModel <- function(balance, cutoff, dataset, pairs, full_pairs,
                             distance_DAPS, num_match_DAPS, out.col) {
   
