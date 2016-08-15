@@ -15,7 +15,7 @@ finite M entry are taken. If set to a number, no entries are
 allowed to be matched if larger than caliper.}
 }
 \value{
-An ordered matrix of the row and column indeces that are matched.
+An ordered matrix of the row and column indices that are matched.
 }
 \description{
 Takes in a matrix and runs through it matching rows to columns with small entries.

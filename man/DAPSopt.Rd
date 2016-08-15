@@ -6,7 +6,8 @@
 Function that chooses the optimal weight and fits DAPSm.}
 \usage{
 DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1, w_tol = 0.01,
-  distance = StandDist, caliper_type, quiet = FALSE, coord_dist = FALSE)
+  distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
+  coord_dist = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, and observed confounders.}
@@ -15,11 +16,11 @@ DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1, w_tol = 0.01,
 Scalar.}
 
 \item{coords.cols}{If the columns of coordinates are not named 'Longitude' and 'Latitude',
-coords.columns are the column indeces corresponding to longitude and latitude
+coords.columns are the column indices corresponding to longitude and latitude
 accordingly.}
 
 \item{cov.cols}{If the weight is set to 'optimal', standardized difference of means will be
-calculated on the columns whose indeces are in cov.cols.}
+calculated on the columns whose indices are in cov.cols.}
 
 \item{cutoff}{The cutoff of standardized difference of means under which the covariates are
 considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.}
@@ -41,7 +42,7 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 }
 \value{
 List of weight chosen, matched dataset, standardized difference of
-the columns in cov.cols, indeces of matched treated and controls.
+the columns in cov.cols, indices of matched treated and controls.
 }
 \description{
 DAPSm with optimal weight

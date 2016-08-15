@@ -14,11 +14,11 @@ estimates (named prop.scores) and observed confounders.}
 \item{caliper}{A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.}
 
 \item{coords.cols}{If the columns of coordinates are not named 'Longitude' and 'Latitude',
-coords.columns are the column indeces corresponding to longitude and latitude
+coords.columns are the column indices corresponding to longitude and latitude
 accordingly.}
 
 \item{cov.cols}{If the weight is set to 'optimal', standardized difference of means will be
-calculated on the columns whose indeces are in cov.cols.}
+calculated on the columns whose indices are in cov.cols.}
 
 \item{cutoff}{The cutoff of standardized difference of means under which the covariates are
 considered balanced. Defaults to 0.1.}
@@ -40,7 +40,7 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 }
 \value{
 List of next interval, matched dataset, standardized difference of
-the columns in cov.cols, indeces of matched treated and controls, and whether
+the columns in cov.cols, indices of matched treated and controls, and whether
 balance was achieved.
 }
 \description{

@@ -7,8 +7,8 @@
 DAPSest(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   weight = "optimal", coords.columns = NULL, ignore.cols = NULL,
   pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
-  distance = StandDist, caliper_type, quiet = FALSE, coord_dist = FALSE,
-  true_value = NULL)
+  distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
+  coord_dist = FALSE, true_value = NULL)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
@@ -28,14 +28,14 @@ distance. If set to 'optimal', the 'optimal' weight is chosen. Defaults to
 'optimal'.}
 
 \item{coords.columns}{If the columns of coordinates are not named 'Longitude' and 'Latitude',
-coords.columns are the column indeces corresponding to longitude and latitude
+coords.columns are the column indices corresponding to longitude and latitude
 accordingly.}
 
 \item{pairsRet}{Whether we want to return the information on the matched pairs. Logical.
 Defaults to FALSE.}
 
 \item{cov.cols}{If the weight is set to 'optimal', standardized difference of means will be
-calculated on the columns whose indeces are in cov.cols.}
+calculated on the columns whose indices are in cov.cols.}
 
 \item{cutoff}{The cutoff of standardized difference of means under which the covariates are
 considered balanced. Defaults to 0.1.}
@@ -58,8 +58,8 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 \item{true_value}{Numeric. If provided, an indicator of whether the CI covers the true value is
 returned.}
 
-\item{ignore.col}{All column indeces that should not be included in the linear model. Often,
-this should be set to all columns indeces corresponding to columns other than
+\item{ignore.col}{All column indices that should not be included in the linear model. Often,
+this should be set to all columns indices corresponding to columns other than
 outcome, treatment, and observed confounders.}
 }
 \value{

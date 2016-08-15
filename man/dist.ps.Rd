@@ -5,8 +5,8 @@
 \title{The central DAPS function}
 \usage{
 dist.ps(treated, control, caliper = 0.1, weight = 0.8,
-  coords.columns = NULL, distance = StandDist, caliper_type,
-  coord_dist = FALSE)
+  coords.columns = NULL, distance = StandDist, caliper_type = c("DAPS",
+  "PS"), coord_dist = FALSE)
 }
 \arguments{
 \item{treated}{A data frame include the treated units and the
@@ -23,7 +23,7 @@ to be given on propensity score difference.}
 
 \item{coords.columns}{If the columns of coordinates are not named
 'Longitude', 'Latitude', coords.cols should be the
- column indeces corresponding to longitude and
+ column indices corresponding to longitude and
  latitude accordingly.}
 
 \item{distance}{Function that takes in the distance matrix and returns
