@@ -407,10 +407,6 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' If the columns of coordinates are not named 'Longitude' and 'Latitude',
 #' coords.columns are the column indices corresponding to longitude and latitude
 #' accordingly.
-#' @param ignore.col
-#' All column indices that should not be included in the linear model. Often,
-#' this should be set to all columns indices corresponding to columns other than
-#' outcome, treatment, and observed confounders.
 #' @param pairsRet
 #' Whether we want to return the information on the matched pairs. Logical.
 #' Defaults to FALSE.
@@ -445,7 +441,7 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' 
 #' @export
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
-                    weight = 'optimal', coords.columns = NULL, ignore.cols = NULL,
+                    weight = 'optimal', coords.columns = NULL,
                     pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
                     distance = StandDist, caliper_type = c('DAPS', 'PS'),
                     quiet = FALSE, coord_dist = FALSE, true_value = NULL) {
