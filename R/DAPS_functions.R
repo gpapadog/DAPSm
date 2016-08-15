@@ -16,8 +16,6 @@
 #' D <- matrix(rexp(800, rate = 0.5), 20, 40)
 #' MinDistMatch(D, caliper = NULL)
 #' MinDistMatch(D, caliper = 0.1)
-#'
-#' @export
 MinDistMatch <- function(M, caliper = NULL) {
 
   num_trt <- nrow(M)
@@ -116,8 +114,6 @@ MinDistMatch <- function(M, caliper = NULL) {
 #' daps <- dist.ps(treated = dat[dat$Trt == 1, ], control = dat[dat$Trt == 0, ],
 #'                 caliper_type = 'DAPS', caliper = 1)
 #' head(daps)
-#' 
-#' @export
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
                     caliper_type = c('DAPS', 'PS'), coord_dist = FALSE) {
@@ -447,8 +443,7 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' standardized difference of means, optimal weight chosen, information on matched
 #' pairs.
 #' 
-#' @examples
-#' 
+#' @export
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     weight = 'optimal', coords.columns = NULL, ignore.cols = NULL,
                     pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
