@@ -53,7 +53,7 @@ We are now ready to fit DAPSm to the data. The arguments on the function are des
 - ```caliper```: The caliper that will be used for matching.
 - ```weight```: This corresponds to the $w$ argument in the definition of DAPS. Higher values of weight correspond to matching score based more on the propensity score difference, and less on proximity.
     - Set weight to a specific value if you have a prior belief of the relative importance of propensity scores and proximity.
-    - Otherwise, set weight equal to 'optimal'. This will perform a procedure that chooses $w$ as the minimum $w$ for which balance of observed covariates is achieved. However, for computational efficiency the optimal algorithm assumes that the absolute standardized difference of means (ASDM) of observed covariates is a decreasing function of $w$. The algorithm initiates at 0.5 and checks balance. If balance is achieved, the algorithm moves to 0.25. If not, it moves to 0.75. It iterates until a tolerance level is met.
+    - Otherwise, set weight equal to 'optimal'. This will perform a procedure that chooses $w$ as the minimum $w$ for which balance of observed covariates is achieved. However, for computational efficiency the optimal algorithm assumes that the absolute standardized difference of means (ASDM) of observed covariates is a decreasing function of $w$. The algorithm initiates at 0.5 and checks balance. If balance is achieved, the algorithm moves to 0.25. If not, it moves to 0.75. The algorithm suggests smaller or larger values by $1/2^{n + 1}$ where $n$ is the iteration number depending on whether balance was or was not achieved accordingly. It stops when the interval size is less than a tolerance level.
 - ```coords.columns```: If the column names corresponding to the coordinates are named 'Longitude' and 'Latitude' this does not need to be specified. Otherwise, set coords.columns to be the indeces of the coordinate columns.
 - ```pairsRet```: Logical. If set to TRUE, a matrix of information on the matched pairs will be returned. This will include unit IDs, coordinate, treatment, outcome and propensity score of the matched pairs. Each matched pair corresponds to a row, so we can identify which treated is matched to which control.
 - ```cov.cols```: Specify this if the weight is set to 'optimal'. Otherwise, it will be ignored. This argument described the indices of the columns that include observed covariates. In the case of the optimal weight choice, the algorithm will ensure that the variables with indices in cov.cols are balanced.
@@ -78,7 +78,12 @@ We are now ready to fit DAPSm to the data. The arguments on the function are des
 - Plots of covariates after matching should be used in addition to the ASDM that the algorithm uses to ensure balance.
 
 
-# Choosing the optimal $w$ - 2nd option
+# Choosing the optimal $w$ - 2$^{nd}$ option
 
+As mentioned before the optimal weight algorithm is a fast search for the optimal $w$ defined as the minimum $w$ for which the absolute standardized difference of means (ASDM) of observed covariates is less than a cutoff. The fast search defined above is based on the assumption that ASDM is decreasing as more and more matching weight is given to the propensity score (increasing $w$).
+
+However, it is often the case that this might not be true. For example, if one of the observed covariates in our data set is spatially structured, then distance might work adequately to balance it, and therefore the trend of ASDM as a function of $w$ will not necessarily be decreasing.
+
+For that reason, we suggest a second option for calculating the optimal $w$. This algorithm still defines the optimal $w$ as the minimum $w$ for which ASDM of all covariates is below a cutoff. However, one can instead scan multiple values of $w$ ranging from 0 to 1, and specificly choose the smallest one that acheives balance.
 
 
