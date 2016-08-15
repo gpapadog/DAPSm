@@ -66,6 +66,5 @@ rownames(dat) <- 1:nrow(dat)
 daps <- dist.ps(treated = dat[dat$Trt == 1, ], control = dat[dat$Trt == 0, ],
                 caliper_type = 'DAPS', caliper = 1)
 head(daps)
-
 }
 

@@ -75,7 +75,4 @@ the smallest weight that satisfies standardized difference less than a cutoff.
 For computational reasons, we do not fit DAPS on a lot of weights, but perform
 an iterative algorithm to identify the optimal w.
 }
-\examples{
-
-}
 

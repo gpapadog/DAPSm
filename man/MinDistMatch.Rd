@@ -26,6 +26,5 @@ set.seed(1)
 D <- matrix(rexp(800, rate = 0.5), 20, 40)
 MinDistMatch(D, caliper = NULL)
 MinDistMatch(D, caliper = 0.1)
-
 }
 
