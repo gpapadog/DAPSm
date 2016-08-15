@@ -412,7 +412,10 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' Defaults to FALSE.
 #' @param cov.cols
 #' If the weight is set to 'optimal', standardized difference of means will be
-#' calculated on the columns whose indices are in cov.cols.
+#' calculated on the columns whose indices are in cov.cols. If the weight is set
+#' to a numeric value, then cov.cols can be left NULL, or it can be used if we
+#' want the function to return the standardized difference of means of the columns
+#' with indices in cov.cols.
 #' @param cutoff
 #' The cutoff of standardized difference of means under which the covariates are
 #' considered balanced. Defaults to 0.1.
@@ -466,6 +469,8 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                         distance = distance,
                         caliper_type = caliper_type,
                         coord_dist = coord_dist)
+    
+    
     # Getting the matched pairs.
     pairs.out        <- daps.out$match
     names(pairs.out) <- rownames(daps.out)
@@ -473,6 +478,18 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
     pairs.daps  <- dataset[c(as.numeric(names(pairs.out)),
                              as.numeric(pairs.out)), ]
     r$weight <- weight
+    
+    if (!is.null(cov.cols)) {
+      diff_mat <- as.matrix(pairs.daps[, cov.cols])
+      stand_diff <- apply(diff_mat, 2, function(x) {
+        (mean(x[pairs.daps$X == 1]) - mean(x[pairs.daps$X == 0])) /
+          sd(x[pairs.daps$X == 1])
+      })
+      r$stand_diff <- stand_diff
+    }
+    r$ind_trt <- as.numeric(names(pairs.out))
+    r$ind_cnt <- as.numeric(pairs.out)
+    
     
   } else if (weight == 'optimal') {
     daps.opt <- DAPSopt(dataset, caliper = caliper,

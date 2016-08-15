@@ -78,6 +78,7 @@ We are now ready to fit DAPSm to the data. The arguments on the function are des
 - Plots of covariates after matching should be used in addition to the ASDM that the algorithm uses to ensure balance.
 
 
+# Choosing the optimal $w$ - 2nd option
 
 
 

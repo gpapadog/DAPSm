@@ -5,10 +5,10 @@
 \title{Fitting DAPSm with fixed or optimal weight}
 \usage{
 DAPSest(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
-  weight = "optimal", coords.columns = NULL, ignore.cols = NULL,
-  pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
+  weight = "optimal", coords.columns = NULL, pairsRet = FALSE,
+  cov.cols = NULL, cutoff = 0.1, w_tol = 0.01, coord_dist = FALSE,
   distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
-  coord_dist = FALSE, true_value = NULL)
+  true_value = NULL)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
@@ -43,6 +43,9 @@ considered balanced. Defaults to 0.1.}
 \item{w_tol}{Tolerance on the choice of the optimal weight. Only needed when weight is
 'optimal'. Defaults to 0.01.}
 
+\item{coord_dist}{Set to true when we want to use a distance function that calculates the
+spherical distance of points instead of Euclidean. Defaults to FALSE.}
+
 \item{distance}{Function that takes in the distance matrix and returns the standardized
 distance matrix. Defaults to the funcion that subtracks the minimum and
 divides by the range.}
@@ -52,15 +55,8 @@ either 'DAPS', or 'PS'.}
 
 \item{quiet}{Whether we want to print the choice of weight in DAPS optimal. Defauls to TRUE.}
 
-\item{coord_dist}{Set to true when we want to use a distance function that calculates the
-spherical distance of points instead of Euclidean. Defaults to FALSE.}
-
 \item{true_value}{Numeric. If provided, an indicator of whether the CI covers the true value is
 returned.}
-
-\item{ignore.col}{All column indices that should not be included in the linear model. Often,
-this should be set to all columns indices corresponding to columns other than
-outcome, treatment, and observed confounders.}
 }
 \value{
 A list including: the estimate of the causal effect, and potential
