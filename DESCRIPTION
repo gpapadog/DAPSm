@@ -11,7 +11,7 @@ LazyData: TRUE
 URL: https://github.com/gpapadog/DAPSm
 RoxygenNote: 5.0.1.9000
 <<<<<<< HEAD
-Imports: fields
+Imports: fields, stats
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
