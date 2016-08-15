@@ -48,7 +48,4 @@ the columns in cov.cols, indices of matched treated and controls.
 DAPSm with optimal weight
 Function that chooses the optimal weight and fits DAPSm.
 }
-\examples{
-
-}
 
