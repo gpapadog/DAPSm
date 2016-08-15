@@ -10,7 +10,8 @@ License: GPL (>= 2)
 LazyData: TRUE
 URL: https://github.com/gpapadog/DAPSm
 RoxygenNote: 5.0.1.9000
-Suggests: knitr,
+Suggests: ggplot2,
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
 Imports: fields, stats
