@@ -419,6 +419,9 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' @param w_tol
 #' Tolerance on the choice of the optimal weight. Only needed when weight is
 #' 'optimal'. Defaults to 0.01.
+#' @param coord_dist
+#' Set to true when we want to use a distance function that calculates the
+#' spherical distance of points instead of Euclidean. Defaults to FALSE.
 #' @param distance
 #' Function that takes in the distance matrix and returns the standardized
 #' distance matrix. Defaults to the funcion that subtracks the minimum and
@@ -428,9 +431,6 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' either 'DAPS', or 'PS'.
 #' @param quiet
 #' Whether we want to print the choice of weight in DAPS optimal. Defauls to TRUE.
-#' @param coord_dist
-#' Set to true when we want to use a distance function that calculates the
-#' spherical distance of points instead of Euclidean. Defaults to FALSE.
 #' @param true_value
 #' Numeric. If provided, an indicator of whether the CI covers the true value is
 #' returned.
@@ -442,9 +442,10 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' @export
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     weight = 'optimal', coords.columns = NULL,
-                    pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
-                    distance = StandDist, caliper_type = c('DAPS', 'PS'),
-                    quiet = FALSE, coord_dist = FALSE, true_value = NULL) {
+                    pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1,
+                    w_tol = 0.01, coord_dist = FALSE, distance = StandDist,
+                    caliper_type = c('DAPS', 'PS'),
+                    quiet = FALSE, true_value = NULL) {
 
   caliper_type <- match.arg(caliper_type)
 
