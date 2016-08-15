@@ -9,7 +9,7 @@
 #'                finite M entry are taken. If set to a number, no entries are
 #'                allowed to be matched if larger than caliper.
 #'
-#' @return An ordered matrix of the row and column indeces that are matched.
+#' @return An ordered matrix of the row and column indices that are matched.
 #'
 #' @examples
 #' set.seed(1)
@@ -66,7 +66,6 @@ MinDistMatch <- function(M, caliper = NULL) {
 }
 
 
-
 #' The central DAPS function
 #'
 #' Takes in a two data frames one with treatment and one with control units
@@ -85,7 +84,7 @@ MinDistMatch <- function(M, caliper = NULL) {
 #'                       to be given on propensity score difference.
 #' @param coords.columns If the columns of coordinates are not named
 #'                      'Longitude', 'Latitude', coords.cols should be the
-#'                       column indeces corresponding to longitude and
+#'                       column indices corresponding to longitude and
 #'                       latitude accordingly.
 #' @param distance       Function that takes in the distance matrix and returns
 #'                       the standardized distance matrix. Defaults to the
@@ -121,21 +120,21 @@ MinDistMatch <- function(M, caliper = NULL) {
 #' @export
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
-                    caliper_type, coord_dist = FALSE) {
-
-  require(fields)  # In order to use rdist().
+                    caliper_type = c('DAPS', 'PS'), coord_dist = FALSE) {
   
+  caliper_type <- match.arg(caliper_type)
+
   if (!is.null(coords.columns)) {
     names(treated)[coords.columns] <- c('Longitude', 'Latitude')
     names(control)[coords.columns] <- c('Longitude', 'Latitude')
   }
   
   if (coord_dist) {  # Spherical distance on the globe.
-    dist.mat <- rdist.earth(cbind(treated$Longitude, treated$Latitude),
-                            cbind(control$Longitude, control$Latitude))
+    dist.mat <- fields::rdist.earth(cbind(treated$Longitude, treated$Latitude),
+                                    cbind(control$Longitude, control$Latitude))
   } else {
-    dist.mat <- rdist(cbind(treated$Longitude, treated$Latitude),
-                      cbind(control$Longitude, control$Latitude))
+    dist.mat <- fields::rdist(cbind(treated$Longitude, treated$Latitude),
+                              cbind(control$Longitude, control$Latitude))
   }
   stand.dist.mat <- distance(dist.mat)
   ps.diff <- t(sapply(1:nrow(treated),
@@ -196,11 +195,11 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' Scalar.
 #' @param coords.cols
 #' If the columns of coordinates are not named 'Longitude' and 'Latitude',
-#' coords.columns are the column indeces corresponding to longitude and latitude
+#' coords.columns are the column indices corresponding to longitude and latitude
 #' accordingly.
 #' @param cov.cols
 #' If the weight is set to 'optimal', standardized difference of means will be
-#' calculated on the columns whose indeces are in cov.cols.
+#' calculated on the columns whose indices are in cov.cols.
 #' @param cutoff
 #' The cutoff of standardized difference of means under which the covariates are
 #' considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.
@@ -221,13 +220,16 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' spherical distance of points instead of Euclidean. Defaults to FALSE.
 #' 
 #' @return List of weight chosen, matched dataset, standardized difference of
-#' the columns in cov.cols, indeces of matched treated and controls.
+#' the columns in cov.cols, indices of matched treated and controls.
 #' 
 #' @examples
 #' 
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
-                    w_tol = 0.01, distance = StandDist, caliper_type,
+                    w_tol = 0.01, distance = StandDist,
+                    caliper_type = c('DAPS', 'PS'),
                     quiet = FALSE, coord_dist = FALSE) {
+  
+  caliper_type <- match.arg(caliper_type)
   
   # What we will return
   r <- NULL
@@ -293,11 +295,11 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
 #' @param coords.cols
 #' If the columns of coordinates are not named 'Longitude' and 'Latitude',
-#' coords.columns are the column indeces corresponding to longitude and latitude
+#' coords.columns are the column indices corresponding to longitude and latitude
 #' accordingly.
 #' @param cov.cols
 #' If the weight is set to 'optimal', standardized difference of means will be
-#' calculated on the columns whose indeces are in cov.cols.
+#' calculated on the columns whose indices are in cov.cols.
 #' @param cutoff
 #' The cutoff of standardized difference of means under which the covariates are
 #' considered balanced. Defaults to 0.1.
@@ -318,13 +320,16 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' spherical distance of points instead of Euclidean. Defaults to FALSE.
 #' 
 #' @return List of next interval, matched dataset, standardized difference of
-#' the columns in cov.cols, indeces of matched treated and controls, and whether
+#' the columns in cov.cols, indices of matched treated and controls, and whether
 #' balance was achieved.
 #' 
 #' @examples 
 WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
                          caliper_type, coord_dist = FALSE) {
+
+  # I dont need to check caliper_type for this function, since it will not be
+  # exported, and it's only used within DAPSopt.
 
   r <- NULL
   
@@ -404,18 +409,18 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' 'optimal'.
 #' @param coords.columns
 #' If the columns of coordinates are not named 'Longitude' and 'Latitude',
-#' coords.columns are the column indeces corresponding to longitude and latitude
+#' coords.columns are the column indices corresponding to longitude and latitude
 #' accordingly.
 #' @param ignore.col
-#' All column indeces that should not be included in the linear model. Often,
-#' this should be set to all columns indeces corresponding to columns other than
+#' All column indices that should not be included in the linear model. Often,
+#' this should be set to all columns indices corresponding to columns other than
 #' outcome, treatment, and observed confounders.
 #' @param pairsRet
 #' Whether we want to return the information on the matched pairs. Logical.
 #' Defaults to FALSE.
 #' @param cov.cols
 #' If the weight is set to 'optimal', standardized difference of means will be
-#' calculated on the columns whose indeces are in cov.cols.
+#' calculated on the columns whose indices are in cov.cols.
 #' @param cutoff
 #' The cutoff of standardized difference of means under which the covariates are
 #' considered balanced. Defaults to 0.1.
@@ -447,8 +452,10 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     weight = 'optimal', coords.columns = NULL, ignore.cols = NULL,
                     pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1, w_tol = 0.01,
-                    distance = StandDist, caliper_type, quiet = FALSE,
-                    coord_dist = FALSE, true_value = NULL) {
+                    distance = StandDist, caliper_type = c('DAPS', 'PS'),
+                    quiet = FALSE, coord_dist = FALSE, true_value = NULL) {
+
+  caliper_type <- match.arg(caliper_type)
 
   # What we return.
   r <- NULL
