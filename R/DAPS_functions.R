@@ -325,6 +325,9 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' balance was achieved.
 #' 
 #' @examples 
+#' data('toyData')
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
 WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
                          caliper_type, coord_dist = FALSE) {
