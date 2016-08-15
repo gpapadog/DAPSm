@@ -242,9 +242,10 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
     if (!quiet) {
       print(interval)
     }
-    x <- WeightChoice(dataset, caliper, coords.cols, cov.cols,
-                      cutoff, interval, distance = distance,
-                      caliper_type, coord_dist = coord_dist)
+    x <- WeightChoice(dataset = dataset, caliper = caliper,
+                      coords.col = coords.cols, cov.cols = cov.cols,
+                      cutoff = cutoff, interval = interval, distance = distance,
+                      caliper_type = caliper_type, coord_dist = coord_dist)
     interval <- x$new_interval
     if (x$success) {
       r$weight <- x$weight
@@ -292,6 +293,9 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' @param dataset
 #' Data frame including treatment, outcome, coordinates, propensity score
 #' estimates (named prop.scores) and observed confounders.
+#' @param trt.col
+#' If the treatment column is not named 'X', set trt.col to the index of the
+#' column corresponding to the binary treatment.
 #' @param caliper
 #' A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
 #' @param coords.cols
@@ -321,19 +325,26 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' spherical distance of points instead of Euclidean. Defaults to FALSE.
 #' 
 #' @return List of next interval, matched dataset, standardized difference of
-#' the columns in cov.cols, indices of matched treated and controls, and whether
-#' balance was achieved.
+#' the columns in cov.cols, indices of matched treated and controls, whether
+#' balance was achieved, and the next interval in the iterative algorithm.
 #' 
 #' @examples 
 #' data('toyData')
 #' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 #'                            data = toyData)$fitted.values
-WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
+#' r <- WeightChoice(toyData, trt.col = 1, caliper = 0.5, coords.cols = c(4, 5),
+#'                   cov.cols= 6:8, cutoff = 0.1, interval = c(0.5, 1),
+#'                   distance = StandDist, caliper_type = 'DAPS',
+#'                   coord_dist = FALSE)
+#' names(r)
+WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
                          caliper_type, coord_dist = FALSE) {
 
   # I dont need to check caliper_type for this function, since it will not be
   # exported, and it's only used within DAPSopt.
+
+  dataset <- FormDataset(dataset, trt.col = trt.col)
 
   r <- NULL
   
@@ -451,6 +462,24 @@ WeightChoice <- function(dataset, caliper, coords.cols, cov.cols,
 #' pairs.
 #' 
 #' @export
+#' @example
+#' data('toyData')
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' daps1 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.5,
+#'                  weight = 'optimal', coords.columns = c(4, 5),
+#'                  pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+#'                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+#' names(daps1)
+#' 
+#' # Trying for a different value of the caliper
+#' daps2 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.1,
+#'                  weight = 'optimal', coords.columns = c(4, 5),
+#'                  pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+#'                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+#' names(daps2)
+#' daps1$weight
+#' daps2$weight
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     weight = 'optimal', coords.columns = NULL,
                     pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1,
