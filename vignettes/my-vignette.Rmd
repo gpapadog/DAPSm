@@ -1,0 +1,83 @@
+---
+title: "DAPSest"
+author: "Georgia Papadogeorgou"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DAPSest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+DAPSest is a function that can be used to perform Distance Adjusted Propensity Score Matching.
+
+### Why use it:
+
+- In the presence of spatial confounding, encouraging matches of pairs to be geographically close can improve balance of spatial covariates and reduce confounding bias, even if these covariates are not measured.
+- DAPSm combines propensity scores and spatial proximity of a treated-control pair in a new matching score, called Distance Adjusted Propensity Score (DAPS). For a treated unit $i$ and a control unit $j$, DAPS is defined as
+$$ DAPS_{ij} = w * |PS_i - PS_j| + (1-w) * Dist_{ij} $$
+where $PS_i, PS_j$ are the propensity score estimates from a previously fitted model of the binary treatment $Z$ on the observed covariates **X**, and $Dist_{ij}$ is the standardized geographical distance of units $i, j$.
+
+
+### What are the situations that DAPSm should be used?
+
+- DAPSm can be used to balance measured or unmeasured spatial confounders.
+- For example, consider
+    - $X_1, X_2 \sim N(0, 1)$
+    - $U \sim GP(0, W)$ where $W$ is a spatial correlation matrix (points closer to each other have more similar values of $U$)
+    - $Z$ is binary generated from a model where $X_1, X_2, U$ are all predictors, i.e.
+    $$ logit P(Z = 1) = U + X_1 + X_2 $$
+    - The outcome $Y$ is generated from a model where $X_1, X_2, U, Z$ are all predictors, i.e.
+    $$ Y \sim N(Z + U + X_1 + X_2, \sigma^2) $$
+- In the situation above $U$ is a spatial variable and a confounder of the $Z-Y$ relationship.
+- Using DAPSm can reduce bias from missing $U$.
+
+
+# Fitting DAPSm
+
+## Before DAPSest
+
+- Assume that we have a dataset with a binary treatment $Z$, continuous outcome $Y$ and a set of observed suspected confounders **X**.
+- Fit a model to predict the propensity scores of all units using only the observed covariates **X**. Such a model could be
+``` glm(Z ~ X, data = dataset, family = binomial) ```.
+- Acquire the propensity score estimates from your favorite propensity score model and save them as ```prop.scores``` in the data frame of observations.
+- Ensure that your data frame includes information on the treatment, outcome, covariates, coordinates (longitude, latitude), and propensity score estimates.
+
+
+## Using DAPSest
+We are now ready to fit DAPSm to the data. The arguments on the function are described here in detail:
+
+- ```dataset```: This is a data frame where each row is an observation including all the information described above (treatment, outcome, covariates, coordinates and propensity score estimates as "prop.scores").
+- ```out.col```: If the data frame includes the outcome column as 'Y', then this does not need to be specified. If not, set out.col equal to the index of the data frame that includes the outcome information.
+- ```trt.col```: If the treatment is included in the data frame with the name 'X', this argument does not need to be specified. If not, set trt.col to the column index that includes the binary treatment information.
+- ```caliper```: The caliper that will be used for matching.
+- ```weight```: This corresponds to the $w$ argument in the definition of DAPS. Higher values of weight correspond to matching score based more on the propensity score difference, and less on proximity.
+    - Set weight to a specific value if you have a prior belief of the relative importance of propensity scores and proximity.
+    - Otherwise, set weight equal to 'optimal'. This will perform a procedure that chooses $w$ as the minimum $w$ for which balance of observed covariates is achieved. However, for computational efficiency the optimal algorithm assumes that the absolute standardized difference of means (ASDM) of observed covariates is a decreasing function of $w$. The algorithm initiates at 0.5 and checks balance. If balance is achieved, the algorithm moves to 0.25. If not, it moves to 0.75. It iterates until a tolerance level is met.
+- ```coords.columns```: If the column names corresponding to the coordinates are named 'Longitude' and 'Latitude' this does not need to be specified. Otherwise, set coords.columns to be the indeces of the coordinate columns.
+- ```pairsRet```: Logical. If set to TRUE, a matrix of information on the matched pairs will be returned. This will include unit IDs, coordinate, treatment, outcome and propensity score of the matched pairs. Each matched pair corresponds to a row, so we can identify which treated is matched to which control.
+- ```cov.cols```: Specify this if the weight is set to 'optimal'. Otherwise, it will be ignored. This argument described the indices of the columns that include observed covariates. In the case of the optimal weight choice, the algorithm will ensure that the variables with indices in cov.cols are balanced.
+- ```cutoff```: The cutoff of ASDM below which a variable is balanced. Only required when the weight is set to 'optimal'.
+- ```w_tol```: Specify when ```weight = 'optimal'```. This specifies how big is our tolernace with the choice of the optimal $w$. If ```w_tol``` is small, then more iterations will be needed to choose the final value of $w$.
+- ```coord_dist```: Logical. If set to TRUE geo-distance will be calculated from the longitude and latitude information given in the dataset. If set to FALSE, Euclidean distance will be calculated instead.
+- ```distance```: Function. Since the propensity score difference and distance are combined into one quantity (DAPS), they should be on similar scales. For example, distance values that are too large would dominate over the definitiono of DAPS. For that reason, ```distance``` needs to be specified as a function that takes in a matrix of arbitrarily large distances and turns it into a matrix of elements scaled to the propensity score difference scale. The package includes two choices (but any other function would also work):
+    - ```StandDist```: This function takes in a distance matrix with entries $d_{ij}$ and returns a matrix with corresponding entries
+    $$ D_{ij} = \frac{d_{ij} - min_{ij}d_{ij}}{max_{ij}d_{ij} - min_{ij}d_{ij}} $$
+    - ```EmpCDF```: This function takes in a distance matrix with entries $d_{ij}$ and returns a matrix with corresponding values equal to the empirical cdf of $d$.
+    - Both these functions standardize distance to be between 0 and 1.
+- ```caliper_type```: Should be 'DAPS' or 'PS'. This specifies which quantity we want to set the caliper on.
+    - Setting the caliper on 'DAPS' will avoid matches for which the DAPS value is greater than some cutoff $ caliper * sd(DAPS) $.
+    - Otherwise, we can set the caliper only on the propensity score differences by setting ```caliper_type = 'PS'```.
+    - The first option has performed best in simulations.
+- ```quiet```: In the case where weight is set to optimal, the quiet argument controls whether we want the algorithm to print the current stage of the optimal $w$ search. Defaults to FALSE.
+- ```true_value```: If used, an indicator is returned set to TRUE if the confidence interval includes the true value, or FALSE if it doesn't.
+
+
+## After DAPSest
+- Covariate balance should be checked for before and after matching.
+- Plots of covariates after matching should be used in addition to the ASDM that the algorithm uses to ensure balance.
+
+
+
+
+
