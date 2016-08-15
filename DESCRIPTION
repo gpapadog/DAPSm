@@ -1,7 +1,7 @@
 Package: DAPSm
 Type: Package
 Title: Distance Adjusted Propensity Score Matching
-Version: 1.1
+Version: 0.0.0.9000
 Date: 2016-08-12
 Author: Georgia Papadogeorgou
 Maintainer: Georgia Papadogeorgou <gpapadogeorgou@gmail.com>
@@ -10,7 +10,11 @@ License: GPL (>= 2)
 LazyData: TRUE
 URL: https://github.com/gpapadog/DAPSm
 RoxygenNote: 5.0.1.9000
+<<<<<<< HEAD
 Imports: fields
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
+=======
+Imports: fields, stats
+>>>>>>> origin/master
