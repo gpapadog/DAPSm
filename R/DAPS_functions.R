@@ -11,6 +11,7 @@
 #'
 #' @return An ordered matrix of the row and column indices that are matched.
 #'
+#' @export
 #' @examples
 #' set.seed(1)
 #' D <- matrix(rexp(800, rate = 0.5), 20, 40)
