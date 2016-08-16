@@ -6,3 +6,7 @@ Installing and using DAPSm in Rstudio is straightforward. You will first need th
 ### Install and load ```devtools```
 Simply write ```install.packages('devtools')``` in the console to install it, and load it using ```library(devtools)```.
 ### Install and load ```DAPSm```
+```
+library(devtools)
+
+devtools::install_github("gpapadog/DAPSm")```
