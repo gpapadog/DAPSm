@@ -16,4 +16,4 @@
 #'   \item{C3}{Continuous covariate simulated independently as N(0, 1).}
 #'   \item{C4}{Continuous covariate simulated independently as N(0, 1).}
 #' }
-"dataset"
+"toyData"
