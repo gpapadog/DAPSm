@@ -9,4 +9,5 @@ Simply write ```install.packages('devtools')``` in the console to install it, an
 ```
 library(devtools)
 
-devtools::install_github("gpapadog/DAPSm")```
+devtools::install_github("gpapadog/DAPSm")
+```
