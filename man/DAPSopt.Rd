@@ -5,12 +5,13 @@
 \title{DAPSm with optimal weight
 Function that chooses the optimal weight and fits DAPSm.}
 \usage{
-DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1, w_tol = 0.01,
-  distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
-  coord_dist = FALSE)
+DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
+  trt.col = NULL, w_tol = 0.01, distance = StandDist,
+  caliper_type = c("DAPS", "PS"), quiet = FALSE, coord_dist = FALSE)
 }
 \arguments{
-\item{dataset}{Data frame including treatment, outcome, coordinates, and observed confounders.}
+\item{dataset}{Data frame including treatment, outcome, coordinates, observed confounders,
+and propensity score estimates as 'prop.scores'.}
 
 \item{caliper}{A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.
 Scalar.}
@@ -24,6 +25,9 @@ calculated on the columns whose indices are in cov.cols.}
 
 \item{cutoff}{The cutoff of standardized difference of means under which the covariates are
 considered balanced. Specify when weight is set to 'optimal'. Defaults to 0.1.}
+
+\item{trt.col}{The index of the column in the dataset including the binary
+treatment. Necessary when the column is not named 'X'.}
 
 \item{w_tol}{Tolerance on the choice of the optimal weight. Only needed when weight is
 'optimal'. Defaults to 0.01.}
@@ -47,5 +51,14 @@ the columns in cov.cols, indices of matched treated and controls.
 \description{
 DAPSm with optimal weight
 Function that chooses the optimal weight and fits DAPSm.
+}
+\examples{
+data('toyData')
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+daps_opt <- DAPSopt(toyData, caliper = 0.5, coords.cols = c(4, 5),
+                    cov.cols = 6:8, trt.col = 1)
+class(daps_opt)
+names(daps_opt)
 }
 

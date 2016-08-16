@@ -4,12 +4,15 @@
 \alias{WeightChoice}
 \title{The central DAPS optimal function}
 \usage{
-WeightChoice(dataset, caliper, coords.cols, cov.cols, cutoff, interval,
-  distance = StandDist, caliper_type, coord_dist = FALSE)
+WeightChoice(dataset, trt.col = NULL, caliper, coords.cols, cov.cols, cutoff,
+  interval, distance = StandDist, caliper_type, coord_dist = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
 estimates (named prop.scores) and observed confounders.}
+
+\item{trt.col}{If the treatment column is not named 'X', set trt.col to the index of the
+column corresponding to the binary treatment.}
 
 \item{caliper}{A caliper for the DAPS Score difference of matched pairs. Defaults to 0.1.}
 
@@ -40,11 +43,21 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 }
 \value{
 List of next interval, matched dataset, standardized difference of
-the columns in cov.cols, indices of matched treated and controls, and whether
-balance was achieved.
+the columns in cov.cols, indices of matched treated and controls, whether
+balance was achieved, and the next interval in the iterative algorithm.
 }
 \description{
 Performs DAPS and checks whether balance of the covariates has been achieved,
 and chooses the next weight that should be checked.
+}
+\examples{
+data('toyData')
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+r <- WeightChoice(toyData, trt.col = 1, caliper = 0.5, coords.cols = c(4, 5),
+                  cov.cols= 6:8, cutoff = 0.1, interval = c(0.5, 1),
+                  distance = StandDist, caliper_type = 'DAPS',
+                  coord_dist = FALSE)
+names(r)
 }
 

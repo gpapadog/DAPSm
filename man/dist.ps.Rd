@@ -42,6 +42,7 @@ euclidean. Defaults to FALSE.}
 A dataframe, where each row corresponds to each treated unit, and
 includes: the control unit to which it was matched, their propensity score
 difference, their DAPS difference, their distance, their standardized distance.
+NAs in the data frame correspond to units that were not matched.
 }
 \description{
 Takes in a two data frames one with treatment and one with control units
@@ -51,20 +52,13 @@ information on PS difference, matching difference, distance. Caliper can
 can be specified on PS difference or DAPS.
 }
 \examples{
-set.seed(1)
-long <- seq(0, 1, by = 0.01)
-coords <- expand.grid(long = long, lat = long)
-coords <- coords[sample(1:nrow(coords), 200), ]
-X <- matrix(rnorm(3 * nrow(coords)), nrow(coords), 3)
-p <- 1 / (1 + exp(- X \%*\% c(1, -2, 1.7) - coords[, 1] ^ 2 - coords[, 2]))
-Z <- rbinom(nrow(coords), 1, prob = p)
-glmod <- glm(Z ~ X, family = binomial)
-dat <- cbind(Longitude = coords[, 1], Latitude = coords[, 2],
-             prop.scores = glmod$fitted.values, Trt = Z)
-dat <- as.data.frame(dat)
-rownames(dat) <- 1:nrow(dat)
-daps <- dist.ps(treated = dat[dat$Trt == 1, ], control = dat[dat$Trt == 0, ],
-                caliper_type = 'DAPS', caliper = 1)
+data('toyData')
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+daps <- dist.ps(treated = toyData[toyData$Z == 1, ],
+                control = toyData[toyData$Z == 0, ],
+                caliper_type = 'DAPS', caliper = 1,
+                coords.columns = c(4, 5))
 head(daps)
 }
 
