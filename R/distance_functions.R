@@ -7,6 +7,7 @@
 #' entries in x.
 #'
 #' @return A matrix of the same dimensions as the one given.
+#' @export
 #' 
 #' @examples
 #' set.seed(1)
@@ -14,8 +15,6 @@
 #' Dnew <- StandDist(D)
 #' hist(D)
 #' hist(Dnew)
-#' 
-#' @export
 StandDist <- function(x) {
   standx <- (x - min(x)) / (max(x) - min(x))
   return(standx)
@@ -30,6 +29,7 @@ StandDist <- function(x) {
 #' @param x Matrix to be standardized.
 #'
 #' @return A matrix of the same dimensions as the one given.
+#' @export
 #' 
 #' @examples
 #' set.seed(1)
@@ -37,8 +37,6 @@ StandDist <- function(x) {
 #' Dnew <- EmpCDF(D)
 #' hist(D)
 #' hist(Dnew)
-#' 
-#' @export
 EmpCDF <- function(x) {
   y <- stats::ecdf(x)(x)
   y <- matrix(y, nrow = nrow(x), ncol = ncol(x))
