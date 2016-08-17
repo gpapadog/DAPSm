@@ -4,14 +4,16 @@
 \alias{DAPSchoiceModel}
 \title{Choosing the optimal weight and fitting the corresponding DAPSm.}
 \usage{
-DAPSchoiceModel(dataset, out.col = NULL, balance, cutoff, pairs,
-  full_pairs = NULL, distance_DAPS = NULL, weights)
+DAPSchoiceModel(dataset, out.col = NULL, trt.col = NULL, balance,
+  cutoff = 0.1, pairs, full_pairs = NULL, distance_DAPS = NULL, weights)
 }
 \arguments{
 \item{dataset}{The dataset that was supplied to CalcDAPSWeightBalance() for calculating
 balance.}
 
 \item{out.col}{The index of the outcome column if it is not named 'Y' in the dataset.}
+
+\item{trt.col}{The index of the treatment column if it is not named 'X'.}
 
 \item{balance}{A 3-dimensional array including the SDM. First dimension is equal to length
 of weights, second dimension is equal to two corresponding to before and

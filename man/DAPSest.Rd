@@ -74,4 +74,23 @@ the smallest weight that satisfies standardized difference less than a cutoff.
 For computational reasons, we do not fit DAPS on a lot of weights, but perform
 an iterative algorithm to identify the optimal w.
 }
+\examples{
+data('toyData')
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+daps1 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.5,
+                 weight = 'optimal', coords.columns = c(4, 5),
+                 pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+                 w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+names(daps1)
+
+# Trying for a different value of the caliper
+daps2 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.1,
+                 weight = 'optimal', coords.columns = c(4, 5),
+                 pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+                 w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+names(daps2)
+daps1$weight
+daps2$weight
+}
 

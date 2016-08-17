@@ -462,7 +462,7 @@ WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols
 #' pairs.
 #' 
 #' @export
-#' @example 
+#' @examples
 #' data('toyData')
 #' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 #'                            data = toyData)$fitted.values
