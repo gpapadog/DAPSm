@@ -44,14 +44,14 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   caliper_type = c('DAPS', 'PS'),
                                   coord_dist = FALSE, distance = StandDist) {
   
+  caliper_type <- match.arg(caliper_type)
+
   if (is.null(trt.col)) {
     trt.col <- which(names(dataset) == 'X')
   }
   if (is.null(out.col)) {
     out.col <- which(names(dataset) == 'Y')
   }
-  
-  caliper_type <- match.arg(caliper_type)
   
   balance <- array(NA, dim = c(length(weights), 2, length(cov.cols)),
                    dimnames = list(weight = round(weights, 2), NULL,
