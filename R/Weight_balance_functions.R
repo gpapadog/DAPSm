@@ -44,11 +44,18 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   caliper_type = c('DAPS', 'PS'),
                                   coord_dist = FALSE, distance = StandDist) {
   
+  if (is.null(trt.col)) {
+    trt.col <- which(names(dataset) == 'X')
+  }
+  if (is.null(out.col)) {
+    out.col <- which(names(dataset) == 'Y')
+  }
+  
   caliper_type <- match.arg(caliper_type)
   
-  balance <- array(NA, dim = c(length(weights), 2, length(cols.balance)),
+  balance <- array(NA, dim = c(length(weights), 2, length(cov.cols)),
                    dimnames = list(weight = round(weights, 2), NULL,
-                                   names(dataset)[cols.balance]))
+                                   names(dataset)[cov.cols]))
   distance_DAPS <- rep(NA, length(weights))
   num_match_DAPS <- rep(NA, length(weights))
   
@@ -59,7 +66,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
       print(ii)
     }
     A <- DAPSest(dataset, out.col = out.col, trt.col = trt.col,
-                 coords.columns = coord.cols,
+                 coords.columns = coords.columns,
                  weight = weights[ii], caliper = caliper,
                  pairsRet = TRUE, caliper_type = 'DAPS',
                  coord_dist = coord_dist, distance = distance)
@@ -70,7 +77,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
     num_match_DAPS[ii] <- length(pairs[[ii]])
     balance[ii, , ] <- CalculateBalance(dtaBef = as.data.frame(dataset),
                                         dtaAfter = A, trt = trt.col,
-                                        cols = cols.balance)
+                                        cols = cov.cols)
   }
   return(list(balance = balance, pairs = pairs, distance_DAPS = distance_DAPS,
               num_match_DAPS = num_match_DAPS, full_pairs = full_pairs))
@@ -147,6 +154,8 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' balance.
 #' @param out.col
 #' The index of the outcome column if it is not named 'Y' in the dataset.
+#' @param trt.col
+#' The index of the treatment column if it is not named 'X'.
 #' @param balance
 #' A 3-dimensional array including the SDM. First dimension is equal to length
 #' of weights, second dimension is equal to two corresponding to before and
@@ -177,18 +186,24 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' 
 #' @example
 #' @export
-DAPSchoiceModel <- function(dataset, out.col = NULL, balance, cutoff, pairs,
-                            full_pairs = NULL, distance_DAPS = NULL, weights) {
+DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
+                            cutoff = 0.1, pairs, full_pairs = NULL,
+                            distance_DAPS = NULL, weights) {
   
   if (is.null(out.col)) {
     out.col <- which(names(dataset) == 'Y')
   }
+  if (is.null(trt.col)) {
+    trt.col <- which(names(dataset) == 'X')
+  }
   out_name <- names(dataset)[out.col]
+  trt_name <- names(dataset)[trt.col]
   
   r <- NULL
   wh <- min(which(apply(balance[, 2, ], 1,
                         function(x) sum(abs(x) > cutoff)) == 0))
-  lmod <- lm(as.formula(paste(out_name, '~ SnCR')), data = dataset[pairs[[wh]], ])
+  lmod <- lm(as.formula(paste(out_name, '~', trt_name)),
+             data = dataset[pairs[[wh]], ])
   r$est <- lmod$coef[2]
   r$se <- summary(lmod)$coef[2, 2]
   r$num_match <- length(pairs[[wh]]) / 2
