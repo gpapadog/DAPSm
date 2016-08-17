@@ -14,6 +14,7 @@
 #' @return A data frame with renamed the columns of treatment and outcome,
 #' and no longer includes some of the columns.
 #' 
+#' @export
 #' @examples
 #' D <- cbind(Trt = rbinom(100, 1, 1/2), Out = rnorm(100),
 #'            C1 = rnorm(100), C2 = rnorm(100))
