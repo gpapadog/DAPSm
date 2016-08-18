@@ -69,4 +69,4 @@ PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 40), cutoff = 0.
 
 <br>
 
-![Example Page](images/DAPSm_plot1.png)
+images/DAPSm_plot1.png
