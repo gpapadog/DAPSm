@@ -85,10 +85,11 @@ We can plot the matched pairs for different weights. The function ```CalcDAPSWei
 
 ```
 MatchedDataMap(x = bal$full_pairs[[10]], trt_coords = c(3, 4),
-               con_coords = c(7, 8), )
+               con_coords = c(7, 8))
 ```
 
-![Alt text](images/plot2.pdf)
-<img src="images/plot2.pdf" width="400">
-<img src="images/plot3.pdf" width="400">
+![Alt text](images/plot2.png)
+![Alt text](images/plot3.png)
+
+Comparing the plots of matched pairs for the two choices of $w$ we see that for larger $w$ the matched pairs are further away from each other. This is expected since matching weigth given to distance is decreased for increasing $w$.
 
