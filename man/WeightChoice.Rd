@@ -55,7 +55,7 @@ data('toyData')
 toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
                            data = toyData)$fitted.values
 r <- WeightChoice(toyData, trt.col = 1, caliper = 0.5, coords.cols = c(4, 5),
-                  cov.cols= 6:8, cutoff = 0.1, interval = c(0.5, 1),
+                  cov.cols= 6:9, cutoff = 0.1, interval = c(0.5, 1),
                   distance = StandDist, caliper_type = 'DAPS',
                   coord_dist = FALSE)
 names(r)
