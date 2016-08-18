@@ -88,6 +88,7 @@ MatchedDataMap(x = bal$full_pairs[[10]], trt_coords = c(3, 4),
                con_coords = c(7, 8), )
 ```
 
+![Alt text](images/plot2.pdf)
 <img src="images/plot2.pdf" width="400">
 <img src="images/plot3.pdf" width="400">
 
