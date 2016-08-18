@@ -19,3 +19,5 @@ VignetteBuilder: knitr
 Imports: 
     fields,
     stats
+URL: https://github.com/gpapadog/DAPSm
+BugReports: https://github.com/gpapadog/DAPSm/issues
