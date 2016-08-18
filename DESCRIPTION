@@ -9,6 +9,7 @@ Description: FILL
 License: GPL (>= 2)
 LazyData: TRUE
 URL: https://github.com/gpapadog/DAPSm
+BugReports: https://github.com/gpapadog/DAPSm/issues
 RoxygenNote: 5.0.1
 Suggests: 
     ggplot2,
@@ -19,5 +20,4 @@ VignetteBuilder: knitr
 Imports: 
     fields,
     stats
-URL: https://github.com/gpapadog/DAPSm
-BugReports: https://github.com/gpapadog/DAPSm/issues
+
