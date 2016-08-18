@@ -30,7 +30,7 @@ For example, in the toyData2 data set, one could fit DAPSm with w = 0.7 by perfo
 ```
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 weight = 0.7, coords.columns = c(4, 5),
-                pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+                pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
                 coord_dist = TRUE, caliper_type = 'DAPS')
 ```
 
@@ -47,7 +47,7 @@ Fit this algorithm by performing
 ```
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 weight = 'optimal', coords.columns = c(4, 5),
-                pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.15,
+                pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.15,
                 w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
 ```
 

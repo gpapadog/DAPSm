@@ -221,7 +221,7 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
 #' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 #'                            data = toyData)$fitted.values
 #' daps_opt <- DAPSopt(toyData, caliper = 0.5, coords.cols = c(4, 5),
-#'                     cov.cols = 6:8, trt.col = 1)
+#'                     cov.cols = 6:9, trt.col = 1)
 #' class(daps_opt)
 #' names(daps_opt)
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
@@ -333,7 +333,7 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
 #' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 #'                            data = toyData)$fitted.values
 #' r <- WeightChoice(toyData, trt.col = 1, caliper = 0.5, coords.cols = c(4, 5),
-#'                   cov.cols= 6:8, cutoff = 0.1, interval = c(0.5, 1),
+#'                   cov.cols= 6:9, cutoff = 0.1, interval = c(0.5, 1),
 #'                   distance = StandDist, caliper_type = 'DAPS',
 #'                   coord_dist = FALSE)
 #' names(r)
@@ -468,14 +468,14 @@ WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols
 #'                            data = toyData)$fitted.values
 #' daps1 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.5,
 #'                  weight = 'optimal', coords.columns = c(4, 5),
-#'                  pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+#'                  pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
 #'                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
 #' names(daps1)
 #' 
 #' # Trying for a different value of the caliper
 #' daps2 <- DAPSest(toyData, out.col = 2, trt.col = 1, caliper = 0.1,
 #'                  weight = 'optimal', coords.columns = c(4, 5),
-#'                  pairsRet = TRUE, cov.cols = 6:8, cutoff = 0.1,
+#'                  pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
 #'                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
 #' names(daps2)
 #' daps1$weight
