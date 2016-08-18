@@ -66,5 +66,4 @@ Balance of the covariates can be assessed by checking the ASDM as a function of 
 ```
 PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 40), cutoff = 0.15)
 ```
-![Alt text](~/Github/DAPSm_plot1.png "Title")
 
