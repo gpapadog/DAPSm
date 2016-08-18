@@ -70,3 +70,24 @@ PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 40), cutoff = 0.
 <br>
 
 ![Alt text](images/DAPSm_plot1.png)
+
+The function that can be used to choose the optimal weight and fit the model and return estimates is
+```
+DAPS <- DAPSchoiceModel(toyData2, trt.col = 1, balance = bal$balance,
+                        cutoff = 0.15, pairs = bal$pairs,
+                        weights = seq(0, 1, length.out = 40))
+```
+The weight chosen is equal to approximately 0.231.
+
+
+## Plot of matched pairs.
+We can plot the matched pairs for different weights. The function ```CalcDAPSWeightBalance()``` already returned information of the matched pairs for 40 different values of $w$. We will plot the set of matched pairs for the optimal $w$ chosen above, as well as a larger $w$.
+
+```
+MatchedDataMap(x = bal$full_pairs[[10]], trt_coords = c(3, 4),
+               con_coords = c(7, 8), )
+```
+
+![Alt text width="304"](images/plot2.pdf)
+
+![Alt text](images/plot3.pdf)
