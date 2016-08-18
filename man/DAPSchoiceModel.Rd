@@ -47,4 +47,19 @@ is specified.
 After using CalcDAPSWeightBalance() to calculate the balance of covariates for
 varying values of w, we can choose the w that acheives the optimal crieterion.
 }
+\examples{
+data(toyData)
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+                             cov.cols = 6:9, trt.col = 1,
+                             coords.columns = c(4, 5), caliper = 0.3)
+PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
+                  cutoff = 0.15)
+DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
+                        cutoff = 0.15, pairs = bal$pairs,
+                        weights = seq(0, 1, length.out = 30))
+names(DAPS)
+DAPS$est
+}
 

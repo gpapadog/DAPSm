@@ -4,13 +4,16 @@
 \alias{DAPSWeightCE}
 \title{Plot the effect estimate as a function of w.}
 \usage{
-DAPSWeightCE(dataset, out.col, weights, pairs, chosen_w)
+DAPSWeightCE(dataset, out.col = NULL, trt.col = NULL, weights, pairs,
+  chosen_w)
 }
 \arguments{
 \item{dataset}{The dataset that was supplied to CalcDAPSWeightBalance() for calculating
 balance.}
 
 \item{out.col}{The index of the outcome column if it is not named 'Y' in the dataset.}
+
+\item{trt.col}{The index of the treatment column if it is not named 'X'.}
 
 \item{weights}{The weights that we used to fit DAPSm.}
 
@@ -25,5 +28,20 @@ CalcDAPSWeightBalance().}
 Plotting the effect estimate from various fit of DAPSm for varying w. The
 chosen w will be the only red dot. A loess curve is fit to the effect
 estimates.
+}
+\examples{
+data(toyData)
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+                             cov.cols = 6:9, trt.col = 1,
+                             coords.columns = c(4, 5), caliper = 0.3)
+DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
+                        cutoff = 0.15, pairs = bal$pairs,
+                        weights = seq(0, 1, length.out = 30))
+CE <- DAPSWeightCE(dataset = toyData, trt.col = 1,
+                   weights = seq(0, 1, length.out = 30), pairs = x$pairs,
+                   chosen_w = DAPS$weight)
+CE$plot
 }
 

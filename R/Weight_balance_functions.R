@@ -37,8 +37,14 @@
 #' weights, before/after matching and covariates. Balance can be plotted using
 #'  PlotWeightBalance function. A list of the pairs for the different weights.
 #'  
-#' @example
 #' @export
+#' @examples
+#' data(toyData)
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+#'                              cov.cols = 6:9, trt.col = 1,
+#'                              coords.columns = c(4, 5), caliper = 0.1)
 CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   out.col = NULL, coords.columns, caliper,
                                   caliper_type = c('DAPS', 'PS'),
@@ -72,7 +78,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                  coord_dist = coord_dist, distance = distance)
     pairs[[ii]] <- as.numeric(A$pairs[, 9:10])
     full_pairs[[ii]] <- A$pairs
-    distance_DAPS[ii] <- mean(rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)]))
+    distance_DAPS[ii] <- mean(fields::rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)]))
     A <- dataset[pairs[[ii]], ]
     num_match_DAPS[ii] <- length(pairs[[ii]])
     balance[ii, , ] <- CalculateBalance(dtaBef = as.data.frame(dataset),
@@ -111,8 +117,16 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 #' @param ylimit
 #' The limit of the y axis.
 #' 
-#' @example
 #' @export
+#' @examples
+#' data(toyData)
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+#'                              cov.cols = 6:9, trt.col = 1,
+#'                              coords.columns = c(4, 5), caliper = 0.3)
+#' PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
+#'                   cutoff = 0.15)
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               axis_cex = 1, mar = c(4, 4, 2, 8), inset = -0.1,
                               ylimit = NULL) {
@@ -120,7 +134,6 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   if (is.null(ylimit)) {
     ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]))
   }
-  dev.off()
   par(mar = mar)
   plot(1, type = 'n', xlim = c(full_data, length(weights)), axes = FALSE,
        ylim = ylimit, ylab = 'ASDM', xlab = 'Weight')
@@ -184,8 +197,21 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' covariates, the chosen weight, and info on the matched pairs if full_pairs
 #' is specified.
 #' 
-#' @example
 #' @export
+#' @examples
+#' data(toyData)
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+#'                              cov.cols = 6:9, trt.col = 1,
+#'                              coords.columns = c(4, 5), caliper = 0.3)
+#' PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
+#'                   cutoff = 0.15)
+#' DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
+#'                         cutoff = 0.15, pairs = bal$pairs,
+#'                         weights = seq(0, 1, length.out = 30))
+#' names(DAPS)
+#' DAPS$est
 DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
                             cutoff = 0.1, pairs, full_pairs = NULL,
                             distance_DAPS = NULL, weights) {
@@ -233,6 +259,8 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
 #' balance.
 #' @param out.col
 #' The index of the outcome column if it is not named 'Y' in the dataset.
+#' @param trt.col
+#' The index of the treatment column if it is not named 'X'.
 #' @param weights
 #' The weights that we used to fit DAPSm.
 #' @param pairs
@@ -243,15 +271,37 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
 #' @param chosen_w
 #' The weight value that was chosen by DAPSchoiceModel().
 #' 
-#' @example
 #' @export
-DAPSWeightCE <- function(dataset, out.col, weights, pairs, chosen_w) {
+#' @examples
+#' data(toyData)
+#' toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+#'                            data = toyData)$fitted.values
+#' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+#'                              cov.cols = 6:9, trt.col = 1,
+#'                              coords.columns = c(4, 5), caliper = 0.3)
+#' DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
+#'                         cutoff = 0.15, pairs = bal$pairs,
+#'                         weights = seq(0, 1, length.out = 30))
+#' CE <- DAPSWeightCE(dataset = toyData, trt.col = 1,
+#'                    weights = seq(0, 1, length.out = 30), pairs = x$pairs,
+#'                    chosen_w = DAPS$weight)
+#' CE$plot
+DAPSWeightCE <- function(dataset, out.col = NULL, trt.col = NULL, weights,
+                         pairs, chosen_w) {
   
-  out_name <- names(dataset)[out.col]
-  
+  out_name <- 'Y'
+  trt_name <- 'X'
+  if (!is.null(out.col)) {
+    out_name <- names(dataset)[out.col]
+  }
+  if (!is.null(trt.col)) {
+    trt_name <- names(dataset)[trt.col]
+  }
+
   CEweight <- matrix(NA, nrow = length(weights), ncol = 3)
   for (ww in 1:length(weights)) {
-    lmod <- lm(as.formula(paste(out_name, '~ SnCR')), data = dataset[pairs[[ww]], ])
+    lmod <- lm(as.formula(paste(out_name, '~', trt_name)),
+               data = dataset[pairs[[ww]], ])
     CEweight[ww, ] <- summary(lmod)$coef[2, 1] +
       summary(lmod)$coef[2, 2] * 1.96 * c(-1, 0, 1)
   }

@@ -47,4 +47,12 @@ weights, before/after matching and covariates. Balance can be plotted using
 Calculates the balance of covariates as a function of weight when fitting
 DAPS for multiple values of w.
 }
+\examples{
+data(toyData)
+toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                           data = toyData)$fitted.values
+bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
+                             cov.cols = 6:9, trt.col = 1,
+                             coords.columns = c(4, 5), caliper = 0.1)
+}
 
