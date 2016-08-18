@@ -15,7 +15,7 @@ devtools::install_github("gpapadog/DAPSm")
 # DAPSm example
 
 ## toyData2
-toyData2 is a simulated data set where the locations of the observations are 200 power plant locations. The data set includes a binary treatment indicator Z, a continuous outcome Y, a spatial confounder U and other confounders $X_1, X_2, X_3, X_4$. The data set can be loaded using ```data('toyData2')```.
+toyData2 is a simulated data set where the locations of the observations are 200 power plant locations. The data set includes a binary treatment indicator Z, a continuous outcome Y, a spatial confounder U and other confounders X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>. The data set can be loaded using ```data('toyData2')```.
 
 ## Analyzing a data set
 
@@ -25,7 +25,7 @@ There are three main ways to analyze a data set for which we have set of observe
 
 If the investigator has a prior belief of the relative importance of propensity score similarity and distance in the matching, DAPSm could be fit with fixed w expressing these beliefs.
 
-For example, in the toyData2 data set, one could fit DAPSm with $w = 0.7$ by performing
+For example, in the toyData2 data set, one could fit DAPSm with w = 0.7 by performing
 
 ```
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
@@ -38,7 +38,7 @@ daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
 
 The optimal weight is defined as the minimum w for which the absolute standardized difference of means (ASDM) of all covariates is less than a cutoff.
 
-This includes a fast search of the optimal weight. The algorithm assumes a decreasing trend in ASDM for increasing w. It starts at 0.5 and checks balance of the covariates. If balance is acheived w is decreased to 0.25. If balance is not acheived, w is increased to 0.75. The algorithm continues this way, and w is moved by $1/2^(n + 1)$ at each step $n$.
+This includes a fast search of the optimal weight. The algorithm assumes a decreasing trend in ASDM for increasing w. It starts at 0.5 and checks balance of the covariates. If balance is acheived w is decreased to 0.25. If balance is not acheived, w is increased to 0.75. The algorithm continues this way, and w is moved by 1/2<sub>n + 1</sub> at each step n.
 
 The fast algorithm should only be used for large data sets for which an extensive search of the optimal w is not feasible.
 
