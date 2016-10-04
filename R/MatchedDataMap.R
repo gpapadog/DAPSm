@@ -14,6 +14,8 @@
 #' @param con_coords Indeces of the columns including the longitude and latitude
 #' (with this order) of the control unit.
 #' @param plot_title Title of the plot.
+#' @param point_data Whether we want to print points of the treated and control
+#' observations. Treated units are green points and control units are red points.
 #' 
 #' @return Plot of matched pairs.
 #' 
@@ -34,15 +36,16 @@
 #'                  pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
 #'                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
 #' MatchedDataMap(x = daps2$pairs, trt_coords = c(3, 4), con_coords = c(7, 8))
-MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '') {
+MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '',
+                           point_data = TRUE) {
 
   x <- as.data.frame(x)
   
-  point_data <- data.frame(lon = c(x[, trt_coords[1]], x[, con_coords[1]]),
+  point.data <- data.frame(lon = c(x[, trt_coords[1]], x[, con_coords[1]]),
                            lat = c(x[, trt_coords[2]], x[, con_coords[2]]))
-  point_data$col <- 1
-  point_data$col[1:(nrow(point_data) / 2)] <- 0
-  point_data$col <- as.factor(point_data$col)
+  point.data$col <- 1
+  point.data$col[1:(nrow(point.data) / 2)] <- 0
+  point.data$col <- as.factor(point.data$col)
   
   line_data <- matrix(NA, nrow = 2 * nrow(x), ncol = 3)
   colnames(line_data) <- c('lon', 'lat', 'group')
@@ -61,9 +64,11 @@ MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '') {
     theme_bw() +
     theme(axis.text = element_blank(), axis.title = element_blank(),
           panel.grid.major = element_blank(),
-          axis.ticks = element_blank(), panel.border = element_blank()) +
-    geom_point(aes(x = lon, y = lat, color = col), data = point_data) +
-    scale_color_manual(values = c('darkgreen', 'red')) +
+          axis.ticks = element_blank(), panel.border = element_blank())
+  if (point_data) {
+    g <- g + geom_point(aes(x = lon, y = lat, color = col), data = point.data)
+  }
+  g <- g + scale_color_manual(values = c('darkgreen', 'red')) +
     theme(legend.position = 'none') +
     geom_line(aes(x = lon, y = lat, group = group), data = line_data,
               size = rel(0.4), col = 'black')

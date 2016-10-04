@@ -116,6 +116,9 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 #' Inset of the legend Defaults to - 0.1.
 #' @param ylimit
 #' The limit of the y axis.
+#' @param leg_cex The size of the legend. Defaults to 1.
+#' @param plot_title Overall plot title. Defaults to ''.
+#' @param title_cex Size of the title. Defaults to 1.
 #' 
 #' @export
 #' @examples
@@ -129,7 +132,8 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 #'                   cutoff = 0.15)
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               axis_cex = 1, mar = c(4, 4, 2, 8), inset = -0.1,
-                              ylimit = NULL) {
+                              ylimit = NULL, leg_cex = 1, plot_title = '',
+                              title_cex = 1) {
 
   if (is.null(ylimit)) {
     ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]))
@@ -152,7 +156,8 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   par(xpd = TRUE)
   legend('topright', col = 1:dim(balance)[3],
          lty = c(rep(1, 8), rep(3, 8), rep(5, 8)), lwd = 1.5,
-         legend = dimnames(balance)[[3]], cex = 0.7, inset = c(inset, 0))
+         legend = dimnames(balance)[[3]], cex = leg_cex, inset = c(inset, 0))
+  title(main = plot_title, cex.main = title_cex)
 }
 
 
