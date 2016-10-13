@@ -4,7 +4,8 @@
 \alias{MatchedDataMap}
 \title{Plot matches.}
 \usage{
-MatchedDataMap(x, trt_coords, con_coords, plot.title = "")
+MatchedDataMap(x, trt_coords, con_coords, plot.title = "",
+  point_data = TRUE)
 }
 \arguments{
 \item{x}{A data frame where the number of rows corresponds to the number
@@ -18,6 +19,9 @@ control that are matched to each other.}
 
 \item{con_coords}{Indeces of the columns including the longitude and latitude
 (with this order) of the control unit.}
+
+\item{point_data}{Whether we want to print points of the treated and control
+observations. Treated units are green points and control units are red points.}
 
 \item{plot_title}{Title of the plot.}
 }

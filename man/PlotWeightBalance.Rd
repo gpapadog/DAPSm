@@ -5,7 +5,8 @@
 \title{Plotting balance.}
 \usage{
 PlotWeightBalance(balance, full_data = -3, weights, cutoff, axis_cex = 1,
-  mar = c(4, 4, 2, 8), inset = -0.1, ylimit = NULL)
+  mar = c(4, 4, 2, 8), inset = -0.1, ylimit = NULL, leg_cex = 1,
+  plot_title = "", title_cex = 1)
 }
 \arguments{
 \item{balance}{A 3-dimensional array including the SDM. First dimension is equal to length
@@ -27,6 +28,12 @@ to - 3.}
 \item{inset}{Inset of the legend Defaults to - 0.1.}
 
 \item{ylimit}{The limit of the y axis.}
+
+\item{leg_cex}{The size of the legend. Defaults to 1.}
+
+\item{plot_title}{Overall plot title. Defaults to ''.}
+
+\item{title_cex}{Size of the title. Defaults to 1.}
 }
 \description{
 Plots balance of the covariates as a function of w and before matching.
