@@ -34,6 +34,11 @@
 #' @param coord_dist
 #' Set to true when we want to use a distance function that calculates the
 #' spherical distance of points instead of Euclidean. Defaults to FALSE.
+#' @param matching_algorithm
+#' Argument with options 'optimal', or 'greedy'. The optimal choice uses the optmatch R
+#' package to acquire the matches based on propensity score difference and a caliper on
+#' distance. The greedy option matches treated and control units sequentially, starting
+#' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
 #' 
 #' @return List of weight chosen, matched dataset, standardized difference of
 #' the columns in cov.cols, indices of matched treated and controls.
@@ -48,10 +53,11 @@
 #' names(daps_opt)
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                     trt.col = NULL, w_tol = 0.01, distance = StandDist,
-                    caliper_type = c('DAPS', 'PS'),
-                    quiet = FALSE, coord_dist = FALSE) {
+                    caliper_type = c('DAPS', 'PS'), quiet = FALSE,
+                    coord_dist = FALSE, matching_algorithm = c('optimal', 'greedy')) {
   
   caliper_type <- match.arg(caliper_type)
+  matching_algorithm <- match.arg(matching_algorithm)
   
   dataset <- FormDataset(dataset, trt.col = trt.col, out.col = NULL,
                          ignore.cols = NULL)
@@ -64,10 +70,10 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
     if (!quiet) {
       print(interval)
     }
-    x <- WeightChoice(dataset = dataset, caliper = caliper,
-                      coords.col = coords.cols, cov.cols = cov.cols,
-                      cutoff = cutoff, interval = interval, distance = distance,
-                      caliper_type = caliper_type, coord_dist = coord_dist)
+    x <- WeightChoice(dataset = dataset, caliper = caliper, coords.col = coords.cols,
+                      cov.cols = cov.cols, cutoff = cutoff, interval = interval,
+                      distance = distance, caliper_type = caliper_type,
+                      coord_dist = coord_dist, matching_algorithm = matching_algorithm)
     interval <- x$new_interval
     if (x$success) {
       r$weight <- x$weight
@@ -80,12 +86,10 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
   if (is.null(r)) {
     warning('Standardized balance not achieved. Weight set to 1.')
     daps.out <- dist.ps(treated = dataset[dataset$X == 1, ],
-                        control = dataset[dataset$X == 0, ],
-                        caliper = caliper, weight = 1,
-                        coords.columns = coords.cols,
-                        distance = distance,
-                        caliper_type = caliper_type,
-                        coord_dist = coord_dist)
+                        control = dataset[dataset$X == 0, ], caliper = caliper,
+                        weight = 1, coords.columns = coords.cols, distance = distance,
+                        caliper_type = caliper_type, coord_dist = coord_dist,
+                        matching_algorithm = matching_algorithm)
     r$weight <- 1
     pairs.out        <- daps.out$match
     names(pairs.out) <- rownames(daps.out)

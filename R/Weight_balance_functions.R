@@ -47,10 +47,12 @@
 #'                              coords.columns = c(4, 5), caliper = 0.1)
 CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   out.col = NULL, coords.columns, caliper,
-                                  caliper_type = c('DAPS', 'PS'),
-                                  coord_dist = FALSE, distance = StandDist) {
+                                  caliper_type = c('DAPS', 'PS'), coord_dist = FALSE,
+                                  distance = StandDist,
+                                  matching_algorithm = c('optimal', 'greedy')) {
   
   caliper_type <- match.arg(caliper_type)
+  matching_algorithm <- match.arg(matching_algorithm)
 
   if (is.null(trt.col)) {
     trt.col <- which(names(dataset) == 'X')
@@ -72,10 +74,10 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
       print(ii)
     }
     A <- DAPSest(dataset, out.col = out.col, trt.col = trt.col,
-                 coords.columns = coords.columns,
-                 weight = weights[ii], caliper = caliper,
-                 pairsRet = TRUE, caliper_type = 'DAPS',
-                 coord_dist = coord_dist, distance = distance)
+                 coords.columns = coords.columns, weight = weights[ii],
+                 caliper = caliper, pairsRet = TRUE, caliper_type = 'DAPS',
+                 coord_dist = coord_dist, distance = distance,
+                 matching_algorithm = matching_algorithm)
     pairs[[ii]] <- as.numeric(A$pairs[, 9:10])
     full_pairs[[ii]] <- A$pairs
     distance_DAPS[ii] <- mean(fields::rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)]))

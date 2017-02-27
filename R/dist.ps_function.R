@@ -6,27 +6,32 @@
 #' information on PS difference, matching difference, distance. Caliper can
 #' can be specified on PS difference or DAPS.
 #'
-#' @param treated        A data frame include the treated units and the
-#'                       variables: 'Longitude', 'Latitude' and propensity
-#'                       scores (named 'prop.scores'). The rownames of treated
-#'                       should be the unit ids.
-#' @param control        Control units. Same variables as in treated.
-#' @param caliper        A caliper of DAPS or PS difference for matching.
-#' @param weight         Number between 0 and 1, percentage of matching weight
-#'                       to be given on propensity score difference.
-#' @param coords.columns If the columns of coordinates are not named
-#'                      'Longitude', 'Latitude', coords.cols should be the
-#'                       column indices corresponding to longitude and
-#'                       latitude accordingly.
-#' @param distance       Function that takes in the distance matrix and returns
-#'                       the standardized distance matrix. Defaults to the
-#'                       function that subtracks the minimum and divides by
-#'                       the range.
-#' @param caliper_type   Whether we want the caliper to be on DAPS or on the PS.
-#'                       caliper_type must either be 'DAPS', or 'PS'.
-#' @param coord_dist     Set to true when we want to use a distance function that
-#'                       calculates the spherical distance of points instead of
-#'                       euclidean. Defaults to FALSE.
+#' @param treated 
+#' A data frame include the treated units and the variables: 'Longitude', 'Latitude'
+#' and propensity scores (named 'prop.scores'). The rownames of treated should be the
+#' unit ids.
+#' @param control Control units. Same variables as in treated.
+#' @param caliper A caliper of DAPS or PS difference for matching.
+#' @param weight
+#' Number between 0 and 1, percentage of matching weight to be given on propensity
+#' score difference.
+#' @param coords.columns
+#' If the columns of coordinates are not named 'Longitude', 'Latitude', coords.cols
+#' should be the column indices corresponding to longitude and latitude accordingly.
+#' @param distance
+#' Function that takes in the distance matrix and returns the standardized distance
+#' matrix. Defaults to the function that subtracks the minimum and divides by the range
+#' @param caliper_type
+#' Whether we want the caliper to be on DAPS or on the PS. caliper_type must either be
+#' 'DAPS', or 'PS'.
+#' @param coord_dist
+#' Set to true when we want to use a distance function that calculates the spherical
+#' distance of points instead of euclidean. Defaults to FALSE.
+#' @param matching_algorithm
+#' Argument with options 'optimal', or 'greedy'. The optimal choice uses the optmatch R
+#' package to acquire the matches based on propensity score difference and a caliper on
+#' distance. The greedy option matches treated and control units sequentially, starting
+#' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
 #'
 #' @return A dataframe, where each row corresponds to each treated unit, and
 #' includes: the control unit to which it was matched, their propensity score
@@ -44,10 +49,12 @@
 #' head(daps)
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
-                    caliper_type = c('DAPS', 'PS'), coord_dist = FALSE) {
+                    caliper_type = c('DAPS', 'PS'), coord_dist = FALSE,
+                    matching_algorithm = c('optimal', 'greedy')) {
   
+  matching_algorithm <- match.arg(matching_algorithm)
   caliper_type <- match.arg(caliper_type)
-
+  
   if (!is.null(coords.columns)) {
     names(treated)[coords.columns] <- c('Longitude', 'Latitude')
     names(control)[coords.columns] <- c('Longitude', 'Latitude')
@@ -61,27 +68,43 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                               cbind(control$Longitude, control$Latitude))
   }
   stand.dist.mat <- distance(dist.mat)
-  ps.diff <- t(sapply(1:nrow(treated),
-                      function(x) {
-                        abs(treated$prop.scores[x] -
-                              control$prop.scores)
-                      }))
+  
+  # Matrix of ps difference.  
+  treatment_indicator <- c(rep(1, nrow(treated)), rep(0, nrow(control)))
+  propensity_scores <- c(treated$prop.scores, control$prop.scores)
+  ps.diff <- as.matrix(optmatch::match_on(treatment_indicator ~ propensity_scores,
+                                          method = 'euclidean'))
+
+  # DAPS matrix.
   dapscore <- (1 - weight) * stand.dist.mat + weight * ps.diff
   
   # Creating the matrix we will use for matching, depending on
   # whether the caliper is set on DAPS or on the PS.
   if (caliper_type == 'DAPS') {
-    caliper <- caliper * sd(dapscore)
-    M <- ifelse(dapscore <= caliper, dapscore, Inf)
+    M <- dapscore + optmatch::caliper(dapscore, caliper * sd(dapscore))
   } else if (caliper_type == 'PS') {
-    caliper <- caliper * sd(c(treated$prop.scores, control$prop.scores))
-    M <- ifelse(ps.diff <= caliper, ps.diff, Inf)
-    M <- (1 - weight) * stand.dist.mat + weight * M
+    M <- dapscore + optmatch::caliper(ps.diff, caliper * sd(propensity_scores))
   }
+  M <- as.matrix(M)
   
-  pairs <- MinDistMatch(M, caliper = NULL)
-  matched_trt <- pairs[, 1]
-  matched_con <- pairs[, 2]
+  if (matching_algorithm == 'greedy') {
+    pairs <- MinDistMatch(M, caliper = NULL)
+    matched_trt <- pairs[, 1]
+    matched_con <- pairs[, 2]
+  } else {  # Optimal.
+    opt_match <- pairmatch(D, data = data.frame(treatment_indicator))
+    
+    pairs_ids <- sort(as.character(unique(opt_match[!is.na(opt_match)])))
+    wh_trt <- 1:nrow(treated)
+    wh_con <- (nrow(treated) + 1) : (nrow(treated) + nrow(control))
+    match_trt <- cbind(wh_trt, group = as.character(opt_match[wh_trt]))
+    match_con <- cbind(wh_con, group = as.character(opt_match[wh_con]))
+    pairs <- merge(match_trt, match_con, by = 'group')
+    pairs <- pairs[, - which(names(pairs) == 'group')]
+    pairs <- na.omit(pairs)
+    pairs[, 1] <- as.numeric(as.character(pairs[, 1]))
+    pairs[, 2] <- as.numeric(as.character(pairs[, 2])) - nrow(treated)
+  }
   
   # Where we will save the results.
   mat <- data.frame(match = rep(NA, dim(treated)[1]),

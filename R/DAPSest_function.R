@@ -57,6 +57,11 @@
 #' @param true_value
 #' Numeric. If provided, an indicator of whether the CI covers the true value is
 #' returned.
+#' @param matching_algorithm
+#' Argument with options 'optimal', or 'greedy'. The optimal choice uses the optmatch R
+#' package to acquire the matches based on propensity score difference and a caliper on
+#' distance. The greedy option matches treated and control units sequentially, starting
+#' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
 #' 
 #' @return A list including: the estimate of the causal effect, and potential
 #' standardized difference of means, optimal weight chosen, information on matched
@@ -82,31 +87,29 @@
 #' daps1$weight
 #' daps2$weight
 DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
-                    weight = 'optimal', coords.columns = NULL,
-                    pairsRet = FALSE, cov.cols = NULL, cutoff = 0.1,
-                    w_tol = 0.01, coord_dist = FALSE, distance = StandDist,
-                    caliper_type = c('DAPS', 'PS'),
-                    quiet = FALSE, true_value = NULL) {
+                    weight = 'optimal', coords.columns = NULL, pairsRet = FALSE,
+                    cov.cols = NULL, cutoff = 0.1, w_tol = 0.01, coord_dist = FALSE,
+                    distance = StandDist, caliper_type = c('DAPS', 'PS'),
+                    quiet = FALSE, true_value = NULL,
+                    matching_algorithm = c('optimal', 'greedy')) {
   
+  matching_algorithm <- match.arg(matching_algorithm)
   caliper_type <- match.arg(caliper_type)
-  
-  # What we return.
   r <- NULL
   
-  dataset <- as.data.frame(dataset)
   # Naming outcome and treatment as 'Y', 'X'.
+  dataset <- as.data.frame(dataset)
   dataset <- FormDataset(dataset, ignore.cols = NULL,
                          out.col = out.col, trt.col = trt.col)
   # Fitting DAPS.
   
   if (is.numeric(weight)) {
     daps.out <- dist.ps(treated = dataset[dataset$X == 1, ],
-                        control = dataset[dataset$X == 0, ],
-                        caliper = caliper, weight = weight,
-                        coords.columns = coords.columns,
-                        distance = distance,
-                        caliper_type = caliper_type,
-                        coord_dist = coord_dist)
+                        control = dataset[dataset$X == 0, ], caliper = caliper,
+                        weight = weight, coords.columns = coords.columns,
+                        distance = distance, caliper_type = caliper_type,
+                        coord_dist = coord_dist,
+                        matching_algorithm = matching_algorithm)
     
     
     # Getting the matched pairs.
@@ -130,12 +133,11 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
     
     
   } else if (weight == 'optimal') {
-    daps.opt <- DAPSopt(dataset, caliper = caliper,
-                        coords.cols = coords.columns,
-                        cov.cols = cov.cols, cutoff = cutoff,
-                        w_tol = w_tol, distance = distance,
-                        caliper_type = caliper_type, quiet = quiet,
-                        coord_dist = coord_dist)
+    daps.opt <- DAPSopt(dataset, caliper = caliper, coords.cols = coords.columns,
+                        cov.cols = cov.cols, cutoff = cutoff, w_tol = w_tol,
+                        distance = distance, caliper_type = caliper_type,
+                        quiet = quiet, coord_dist = coord_dist,
+                        matching_algorithm = matching_algorithm)
     pairs.daps <- daps.opt$pairs
     r$weight <- daps.opt$weight
     r$stand_diff <- daps.opt$stand_diff

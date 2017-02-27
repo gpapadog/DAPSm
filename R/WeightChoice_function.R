@@ -36,6 +36,11 @@
 #' @param coord_dist
 #' Set to true when we want to use a distance function that calculates the
 #' spherical distance of points instead of Euclidean. Defaults to FALSE.
+#' @param matching_algorithm
+#' Argument with options 'optimal', or 'greedy'. The optimal choice uses the optmatch R
+#' package to acquire the matches based on propensity score difference and a caliper on
+#' distance. The greedy option matches treated and control units sequentially, starting
+#' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
 #' 
 #' @return List of next interval, matched dataset, standardized difference of
 #' the columns in cov.cols, indices of matched treated and controls, whether
@@ -52,13 +57,11 @@
 #' names(r)
 WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
-                         caliper_type, coord_dist = FALSE) {
+                         caliper_type, coord_dist = FALSE,
+                         matching_algorithm = c('optimal', 'greedy')) {
   
-  # I dont need to check caliper_type for this function, since it will not be
-  # exported, and it's only used within DAPSopt.
-  
+  matching_algorithm <- match.arg(matching_algorithm)
   dataset <- FormDataset(dataset, trt.col = trt.col)
-  
   r <- NULL
   
   stand_diff <- rep(cutoff + 1, length(cov.cols))
@@ -69,11 +72,9 @@ WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols
   
   daps.out <- dist.ps(treated = dataset[dataset$X == 1, ],
                       control = dataset[dataset$X == 0, ],
-                      caliper = caliper, weight = weight,
-                      coords.columns = coords.cols,
-                      distance = distance,
-                      caliper_type = caliper_type,
-                      coord_dist = coord_dist)
+                      caliper = caliper, weight = weight, coords.columns = coords.cols,
+                      distance = distance, caliper_type = caliper_type,
+                      coord_dist = coord_dist, matching_algorithm = matching_algorithm)
   pairs.out        <- daps.out$match
   names(pairs.out) <- rownames(daps.out)
   pairs.out        <- na.omit(pairs.out)
