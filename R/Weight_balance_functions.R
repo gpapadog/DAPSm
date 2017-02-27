@@ -193,8 +193,8 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' @param distance_DAPS
 #' Numeric of length equal to the number of weights. Mean distance of DAPS
 #' matches. Can be left NULL. Or use distance_DAPS of CalcDAPSWeightBalance().
-#' @param weights
-#' The weights that we used to fit DAPSm.
+#' @param weights The weights that we used to fit DAPSm.
+#' @param true_value A value that we wish to check if it is in the confidence interval.
 #' 
 #' @return A list of: CE estimate and standard error from a linear model
 #' including only the matched pairs for the optimal w, the number of matches,
@@ -219,7 +219,7 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #' DAPS$est
 DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
                             cutoff = 0.1, pairs, full_pairs = NULL,
-                            distance_DAPS = NULL, weights) {
+                            distance_DAPS = NULL, weights, true_value = NULL) {
   
   if (is.null(out.col)) {
     out.col <- which(names(dataset) == 'Y')
@@ -233,8 +233,7 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
   r <- NULL
   wh <- min(which(apply(balance[, 2, ], 1,
                         function(x) sum(abs(x) > cutoff)) == 0))
-  lmod <- lm(as.formula(paste(out_name, '~', trt_name)),
-             data = dataset[pairs[[wh]], ])
+  lmod <- lm(as.formula(paste(out_name, '~', trt_name)), data = dataset[pairs[[wh]], ])
   r$est <- lmod$coef[2]
   r$se <- summary(lmod)$coef[2, 2]
   r$num_match <- length(pairs[[wh]]) / 2
@@ -246,6 +245,9 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
   r$weight <- weights[wh]
   if (!is.null(full_pairs)) {
     r$pairs <- full_pairs[[wh]]
+  }
+  if (!is.null(true_value)) {
+    r$cover <- (abs(true_value - r$est) < qnorm(0.975) * r$se)
   }
   
   return(r)
