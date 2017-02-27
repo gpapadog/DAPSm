@@ -50,4 +50,3 @@ daps2 <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.5,
                  w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
 MatchedDataMap(x = daps2$pairs, trt_coords = c(3, 4), con_coords = c(7, 8))
 }
-

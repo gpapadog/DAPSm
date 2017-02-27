@@ -24,4 +24,3 @@ Plot of standardized difference of means before and after matching.
 \description{
 Function that plots the standardized difference of means before and after matching.
 }
-

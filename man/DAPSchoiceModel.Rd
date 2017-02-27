@@ -5,7 +5,8 @@
 \title{Choosing the optimal weight and fitting the corresponding DAPSm.}
 \usage{
 DAPSchoiceModel(dataset, out.col = NULL, trt.col = NULL, balance,
-  cutoff = 0.1, pairs, full_pairs = NULL, distance_DAPS = NULL, weights)
+  cutoff = 0.1, pairs, full_pairs = NULL, distance_DAPS = NULL, weights,
+  true_value = NULL)
 }
 \arguments{
 \item{dataset}{The dataset that was supplied to CalcDAPSWeightBalance() for calculating
@@ -35,6 +36,8 @@ Can be left NULL.}
 matches. Can be left NULL. Or use distance_DAPS of CalcDAPSWeightBalance().}
 
 \item{weights}{The weights that we used to fit DAPSm.}
+
+\item{true_value}{A value that we wish to check if it is in the confidence interval.}
 }
 \value{
 A list of: CE estimate and standard error from a linear model
@@ -62,4 +65,3 @@ DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
 names(DAPS)
 DAPS$est
 }
-

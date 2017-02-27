@@ -48,4 +48,3 @@ bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
 PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
                   cutoff = 0.15)
 }
-

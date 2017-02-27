@@ -23,4 +23,3 @@ Dnew <- EmpCDF(D)
 hist(D)
 hist(Dnew)
 }
-

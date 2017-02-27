@@ -44,4 +44,3 @@ CE <- DAPSWeightCE(dataset = toyData, trt.col = 1,
                    chosen_w = DAPS$weight)
 CE$plot
 }
-

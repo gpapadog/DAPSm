@@ -26,4 +26,3 @@ not given.)
 \description{
 Function that calculates the standardized difference of means.
 }
-

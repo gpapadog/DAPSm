@@ -31,4 +31,3 @@ D <- cbind(Trt = rbinom(100, 1, 1/2), Out = rnorm(100),
            C1 = rnorm(100), C2 = rnorm(100))
 D_new <- FormDataset(D, ignore.cols = 4, out.col = 2, trt.col = 1)
 }
-
