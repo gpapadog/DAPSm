@@ -75,7 +75,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
     }
     A <- DAPSest(dataset, out.col = out.col, trt.col = trt.col,
                  coords.columns = coords.columns, weight = weights[ii],
-                 caliper = caliper, pairsRet = TRUE, caliper_type = 'DAPS',
+                 caliper = caliper, pairsRet = TRUE, caliper_type = caliper_type,
                  coord_dist = coord_dist, distance = distance,
                  matching_algorithm = matching_algorithm)
     pairs[[ii]] <- as.numeric(A$pairs[, 9:10])

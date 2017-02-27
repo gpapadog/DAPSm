@@ -24,4 +24,3 @@ A data set containing simulated data with a binary treatment, continuous
 outcome, continuous covariates, and coordinates of the points.
 }
 \keyword{datasets}
-

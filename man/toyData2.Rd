@@ -25,4 +25,3 @@ outcome, continuous covariates, and coordinates of the points. The locations
 of the observations are power plant facilities.
 }
 \keyword{datasets}
-

@@ -85,14 +85,14 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
   } else if (caliper_type == 'PS') {
     M <- dapscore + optmatch::caliper(ps.diff, caliper * sd(propensity_scores))
   }
-  M <- as.matrix(M)
-  
+
   if (matching_algorithm == 'greedy') {
+    M <- as.matrix(M)
     pairs <- MinDistMatch(M, caliper = NULL)
     matched_trt <- pairs[, 1]
     matched_con <- pairs[, 2]
   } else {  # Optimal.
-    opt_match <- pairmatch(D, data = data.frame(treatment_indicator))
+    opt_match <- pairmatch(M, data = data.frame(treatment_indicator))
     
     pairs_ids <- sort(as.character(unique(opt_match[!is.na(opt_match)])))
     wh_trt <- 1:nrow(treated)

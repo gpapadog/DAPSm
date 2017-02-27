@@ -24,4 +24,3 @@ Dnew <- StandDist(D)
 hist(D)
 hist(Dnew)
 }
-

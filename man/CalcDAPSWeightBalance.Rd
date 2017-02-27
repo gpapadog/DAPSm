@@ -6,7 +6,8 @@
 \usage{
 CalcDAPSWeightBalance(dataset, weights, cov.cols, trt.col = NULL,
   out.col = NULL, coords.columns, caliper, caliper_type = c("DAPS", "PS"),
-  coord_dist = FALSE, distance = StandDist)
+  coord_dist = FALSE, distance = StandDist,
+  matching_algorithm = c("optimal", "greedy"))
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
@@ -55,4 +56,3 @@ bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
                              cov.cols = 6:9, trt.col = 1,
                              coords.columns = c(4, 5), caliper = 0.1)
 }
-
