@@ -96,6 +96,7 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   matching_algorithm <- match.arg(matching_algorithm)
   caliper_type <- match.arg(caliper_type)
   r <- NULL
+  r$weight <- weight
   
   # Naming outcome and treatment as 'Y', 'X'.
   dataset <- as.data.frame(dataset)
@@ -111,6 +112,16 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                         coord_dist = coord_dist,
                         matching_algorithm = matching_algorithm)
     
+    # If no matches were acheived, return missing values.
+    if (nrow(daps.out) == 0) {
+      warning(paste0('No matches were acheived for weight = ', weight))
+      r$ind_trt <- NA
+      r$ind_cnt <- NA
+      r$est <- NA
+      r$se <- NA
+      r$pairs <- matrix(NA, nrow = 0, ncol = 12)
+      return(r)
+    }
     
     # Getting the matched pairs.
     pairs.out        <- daps.out$match
@@ -118,8 +129,7 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
     pairs.out        <- na.omit(pairs.out)
     pairs.daps  <- dataset[c(as.numeric(names(pairs.out)),
                              as.numeric(pairs.out)), ]
-    r$weight <- weight
-    
+
     if (!is.null(cov.cols)) {
       diff_mat <- as.matrix(pairs.daps[, cov.cols])
       stand_diff <- apply(diff_mat, 2, function(x) {

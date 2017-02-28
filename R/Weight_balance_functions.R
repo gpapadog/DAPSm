@@ -86,6 +86,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
     balance[ii, , ] <- CalculateBalance(dtaBef = as.data.frame(dataset),
                                         dtaAfter = A, trt = trt.col,
                                         cols = cov.cols)
+    rm(A)
   }
   return(list(balance = balance, pairs = pairs, distance_DAPS = distance_DAPS,
               num_match_DAPS = num_match_DAPS, full_pairs = full_pairs))
@@ -233,8 +234,18 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
   trt_name <- names(dataset)[trt.col]
   
   r <- NULL
-  wh <- min(which(apply(balance[, 2, ], 1,
-                        function(x) sum(abs(x) > cutoff)) == 0))
+  bal_ach <- which(apply(balance[, 2, ], 1, function(x) sum(abs(x) > cutoff)) == 0)
+  if (length(bal_ach) == 0) {  # If balance was not acheived for any.
+    warning('Balance not acheived for any weight.')
+    r$est <- NA
+    r$cover <- NA
+    r$weight <- NA
+    r$pairs <- NA
+    return(r)
+  }
+  
+  # If balance has been acheived, choose the minimum w.
+  wh <- min(bal_ach)
   lmod <- lm(as.formula(paste(out_name, '~', trt_name)), data = dataset[pairs[[wh]], ])
   r$est <- lmod$coef[2]
   r$se <- summary(lmod)$coef[2, 2]

@@ -85,27 +85,33 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
   } else if (caliper_type == 'PS') {
     M <- dapscore + optmatch::caliper(ps.diff, caliper * sd(propensity_scores))
   }
+  M <- as.matrix(M)
 
   if (matching_algorithm == 'greedy') {
-    M <- as.matrix(M)
     pairs <- MinDistMatch(M, caliper = NULL)
     matched_trt <- pairs[, 1]
     matched_con <- pairs[, 2]
   } else {  # Optimal.
-    opt_match <- pairmatch(as.matrix(M), data = data.frame(treatment_indicator))
+    opt_match <- pairmatch(M, data = data.frame(treatment_indicator))
     
     pairs_ids <- sort(as.character(unique(opt_match[!is.na(opt_match)])))
-    wh_trt <- 1:nrow(treated)
-    wh_con <- (nrow(treated) + 1) : (nrow(treated) + nrow(control))
-    match_trt <- cbind(wh_trt, group = as.character(opt_match[wh_trt]))
-    match_con <- cbind(wh_con, group = as.character(opt_match[wh_con]))
-    pairs <- merge(match_trt, match_con, by = 'group')
-    pairs <- pairs[, - which(names(pairs) == 'group')]
-    pairs <- na.omit(pairs)
-    pairs[, 1] <- as.numeric(as.character(pairs[, 1]))
-    pairs[, 2] <- as.numeric(as.character(pairs[, 2])) - nrow(treated)
+    if (length(pairs_ids) == 0) {  # If no matches were acheived return empty matrix.
+      mat <- matrix(NA, nrow = 0, ncol = 5)
+      return(mat)
+      
+    } else {  # matches were made.
+      wh_trt <- 1:nrow(treated)
+      wh_con <- (nrow(treated) + 1) : (nrow(treated) + nrow(control))
+      match_trt <- cbind(wh_trt, group = as.character(opt_match[wh_trt]))
+      match_con <- cbind(wh_con, group = as.character(opt_match[wh_con]))
+      pairs <- merge(match_trt, match_con, by = 'group')
+      pairs <- pairs[, - which(names(pairs) == 'group')]
+      pairs <- na.omit(pairs)
+      pairs[, 1] <- as.numeric(as.character(pairs[, 1]))
+      pairs[, 2] <- as.numeric(as.character(pairs[, 2])) - nrow(treated)
+    }
   }
-  
+
   # Where we will save the results.
   mat <- data.frame(match = rep(NA, dim(treated)[1]),
                     distance = rep(NA, dim(treated)[1]),
@@ -124,7 +130,7 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
     mat$stand.distance[wh_trt] <- stand.dist.mat[wh_trt, wh_con]
     mat$prop.diff[wh_trt] <- treated$prop.scores[wh_trt] -
       control$prop.scores[wh_con]
-    mat$match.diff[wh_trt] <- dapscore[wh_trt, wh_con]
+    mat$match.diff[wh_trt] <- M[wh_trt, wh_con]
     mat$distance[wh_trt] <- dist.mat[wh_trt, wh_con]
   }
   
