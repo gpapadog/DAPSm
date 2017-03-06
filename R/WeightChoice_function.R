@@ -58,7 +58,8 @@
 WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,
                          caliper_type, coord_dist = FALSE,
-                         matching_algorithm = c('optimal', 'greedy')) {
+                         matching_algorithm = c('optimal', 'greedy'), 
+                         remove.unmatchables = FALSE) {
   
   matching_algorithm <- match.arg(matching_algorithm)
   dataset <- FormDataset(dataset, trt.col = trt.col)
@@ -74,7 +75,8 @@ WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols
                       control = dataset[dataset$X == 0, ],
                       caliper = caliper, weight = weight, coords.columns = coords.cols,
                       distance = distance, caliper_type = caliper_type,
-                      coord_dist = coord_dist, matching_algorithm = matching_algorithm)
+                      coord_dist = coord_dist, matching_algorithm = matching_algorithm,
+                      remove.unmatchables = remove.unmatchables)
   pairs.out        <- daps.out$match
   names(pairs.out) <- rownames(daps.out)
   pairs.out        <- na.omit(pairs.out)

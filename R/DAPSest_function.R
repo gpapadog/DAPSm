@@ -62,6 +62,9 @@
 #' package to acquire the matches based on propensity score difference and a caliper on
 #' distance. The greedy option matches treated and control units sequentially, starting
 #' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
+#' @param remove.unmatchables Logical. Argument of the optmatch function. Defaults to
+#' FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+#' set to TRUE, matching might return matches only for some of the treated units.
 #' 
 #' @return A list including: the estimate of the causal effect, and potential
 #' standardized difference of means, optimal weight chosen, information on matched
@@ -91,7 +94,8 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                     cov.cols = NULL, cutoff = 0.1, w_tol = 0.01, coord_dist = FALSE,
                     distance = StandDist, caliper_type = c('DAPS', 'PS'),
                     quiet = FALSE, true_value = NULL,
-                    matching_algorithm = c('optimal', 'greedy')) {
+                    matching_algorithm = c('optimal', 'greedy'),
+                    remove.unmatchables = FALSE) {
   
   matching_algorithm <- match.arg(matching_algorithm)
   caliper_type <- match.arg(caliper_type)
@@ -110,7 +114,8 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                         weight = weight, coords.columns = coords.columns,
                         distance = distance, caliper_type = caliper_type,
                         coord_dist = coord_dist,
-                        matching_algorithm = matching_algorithm)
+                        matching_algorithm = matching_algorithm, 
+                        remove.unmatchables = remove.unmatchables)
     
     # If no matches were acheived, return missing values.
     if (nrow(daps.out) == 0) {
@@ -147,7 +152,8 @@ DAPSest <- function(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
                         cov.cols = cov.cols, cutoff = cutoff, w_tol = w_tol,
                         distance = distance, caliper_type = caliper_type,
                         quiet = quiet, coord_dist = coord_dist,
-                        matching_algorithm = matching_algorithm)
+                        matching_algorithm = matching_algorithm,
+                        remove.unmatchables = remove.unmatchables)
     pairs.daps <- daps.opt$pairs
     r$weight <- daps.opt$weight
     r$stand_diff <- daps.opt$stand_diff

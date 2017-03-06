@@ -39,6 +39,9 @@
 #' package to acquire the matches based on propensity score difference and a caliper on
 #' distance. The greedy option matches treated and control units sequentially, starting
 #' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
+#' @param remove.unmatchables Logical. Argument of the optmatch function. Defaults to
+#' FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+#' set to TRUE, matching might return matches only for some of the treated units.
 #' 
 #' @return List of weight chosen, matched dataset, standardized difference of
 #' the columns in cov.cols, indices of matched treated and controls.
@@ -54,7 +57,8 @@
 DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                     trt.col = NULL, w_tol = 0.01, distance = StandDist,
                     caliper_type = c('DAPS', 'PS'), quiet = FALSE,
-                    coord_dist = FALSE, matching_algorithm = c('optimal', 'greedy')) {
+                    coord_dist = FALSE, matching_algorithm = c('optimal', 'greedy'),
+                    remove.unmatchables = FALSE) {
   
   caliper_type <- match.arg(caliper_type)
   matching_algorithm <- match.arg(matching_algorithm)
@@ -73,7 +77,8 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
     x <- WeightChoice(dataset = dataset, caliper = caliper, coords.col = coords.cols,
                       cov.cols = cov.cols, cutoff = cutoff, interval = interval,
                       distance = distance, caliper_type = caliper_type,
-                      coord_dist = coord_dist, matching_algorithm = matching_algorithm)
+                      coord_dist = coord_dist, matching_algorithm = matching_algorithm,
+                      remove.unmatchables = remove.unmatchables)
     interval <- x$new_interval
     if (x$success) {
       r$weight <- x$weight
@@ -89,7 +94,8 @@ DAPSopt <- function(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
                         control = dataset[dataset$X == 0, ], caliper = caliper,
                         weight = 1, coords.columns = coords.cols, distance = distance,
                         caliper_type = caliper_type, coord_dist = coord_dist,
-                        matching_algorithm = matching_algorithm)
+                        matching_algorithm = matching_algorithm, 
+                        remove.unmatchables = remove.unmatchables)
     r$weight <- 1
     pairs.out        <- daps.out$match
     names(pairs.out) <- rownames(daps.out)

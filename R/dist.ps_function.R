@@ -32,6 +32,9 @@
 #' package to acquire the matches based on propensity score difference and a caliper on
 #' distance. The greedy option matches treated and control units sequentially, starting
 #' from the ones with the smallest propensity score difference. Defaults to 'optimal'.
+#' @param remove.unmatchables Logical. Argument of the optmatch function. Defaults to
+#' FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+#' set to TRUE, matching might return matches only for some of the treated units.
 #'
 #' @return A dataframe, where each row corresponds to each treated unit, and
 #' includes: the control unit to which it was matched, their propensity score
@@ -50,7 +53,8 @@
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
                     caliper_type = c('DAPS', 'PS'), coord_dist = FALSE,
-                    matching_algorithm = c('optimal', 'greedy')) {
+                    matching_algorithm = c('optimal', 'greedy'),
+                    remove.unmatchables = FALSE) {
   
   matching_algorithm <- match.arg(matching_algorithm)
   caliper_type <- match.arg(caliper_type)
@@ -92,7 +96,8 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
     matched_trt <- pairs[, 1]
     matched_con <- pairs[, 2]
   } else {  # Optimal.
-    opt_match <- pairmatch(M, data = data.frame(treatment_indicator))
+    opt_match <- pairmatch(M, data = data.frame(treatment_indicator),
+                           remove.unmatchables = remove.unmatchables)
     
     pairs_ids <- sort(as.character(unique(opt_match[!is.na(opt_match)])))
     if (length(pairs_ids) == 0) {  # If no matches were acheived return empty matrix.
