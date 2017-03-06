@@ -8,7 +8,8 @@ DAPSest(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   weight = "optimal", coords.columns = NULL, pairsRet = FALSE,
   cov.cols = NULL, cutoff = 0.1, w_tol = 0.01, coord_dist = FALSE,
   distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
-  true_value = NULL, matching_algorithm = c("optimal", "greedy"))
+  true_value = NULL, matching_algorithm = c("optimal", "greedy"),
+  remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
@@ -65,6 +66,10 @@ returned.}
 package to acquire the matches based on propensity score difference and a caliper on
 distance. The greedy option matches treated and control units sequentially, starting
 from the ones with the smallest propensity score difference. Defaults to 'optimal'.}
+
+\item{remove.unmatchables}{Logical. Argument of the optmatch function. Defaults to
+FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+set to TRUE, matching might return matches only for some of the treated units.}
 }
 \value{
 A list including: the estimate of the causal effect, and potential

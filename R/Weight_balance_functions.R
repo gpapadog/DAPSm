@@ -32,6 +32,9 @@
 #' Function that takes in the distance matrix and returns the standardized
 #' distance matrix. Defaults to the funcion that subtracks the minimum and
 #' divides by the range.
+#' @param remove.unmatchables Logical. Argument of the optmatch function. Defaults to
+#' FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+#' set to TRUE, matching might return matches only for some of the treated units.
 #' 
 #' @return A list including: a 3-dimensional array. Dimensions correspond to
 #' weights, before/after matching and covariates. Balance can be plotted using
@@ -49,7 +52,8 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   out.col = NULL, coords.columns, caliper,
                                   caliper_type = c('DAPS', 'PS'), coord_dist = FALSE,
                                   distance = StandDist,
-                                  matching_algorithm = c('optimal', 'greedy')) {
+                                  matching_algorithm = c('optimal', 'greedy'),
+                                  remove.unmatchables = FALSE) {
   
   caliper_type <- match.arg(caliper_type)
   matching_algorithm <- match.arg(matching_algorithm)
@@ -77,7 +81,8 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                  coords.columns = coords.columns, weight = weights[ii],
                  caliper = caliper, pairsRet = TRUE, caliper_type = caliper_type,
                  coord_dist = coord_dist, distance = distance,
-                 matching_algorithm = matching_algorithm)
+                 matching_algorithm = matching_algorithm, 
+                 remove.unmatchables = remove.unmatchables)
     pairs[[ii]] <- as.numeric(A$pairs[, 9:10])
     full_pairs[[ii]] <- A$pairs
     distance_DAPS[ii] <- mean(fields::rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)]))

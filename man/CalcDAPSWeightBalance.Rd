@@ -7,7 +7,7 @@
 CalcDAPSWeightBalance(dataset, weights, cov.cols, trt.col = NULL,
   out.col = NULL, coords.columns, caliper, caliper_type = c("DAPS", "PS"),
   coord_dist = FALSE, distance = StandDist,
-  matching_algorithm = c("optimal", "greedy"))
+  matching_algorithm = c("optimal", "greedy"), remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score
@@ -38,6 +38,10 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 \item{distance}{Function that takes in the distance matrix and returns the standardized
 distance matrix. Defaults to the funcion that subtracks the minimum and
 divides by the range.}
+
+\item{remove.unmatchables}{Logical. Argument of the optmatch function. Defaults to
+FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+set to TRUE, matching might return matches only for some of the treated units.}
 }
 \value{
 A list including: a 3-dimensional array. Dimensions correspond to

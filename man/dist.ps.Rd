@@ -6,7 +6,8 @@
 \usage{
 dist.ps(treated, control, caliper = 0.1, weight = 0.8,
   coords.columns = NULL, distance = StandDist, caliper_type = c("DAPS",
-  "PS"), coord_dist = FALSE, matching_algorithm = c("optimal", "greedy"))
+  "PS"), coord_dist = FALSE, matching_algorithm = c("optimal", "greedy"),
+  remove.unmatchables = FALSE)
 }
 \arguments{
 \item{treated}{A data frame include the treated units and the variables: 'Longitude', 'Latitude'
@@ -36,6 +37,10 @@ distance of points instead of euclidean. Defaults to FALSE.}
 package to acquire the matches based on propensity score difference and a caliper on
 distance. The greedy option matches treated and control units sequentially, starting
 from the ones with the smallest propensity score difference. Defaults to 'optimal'.}
+
+\item{remove.unmatchables}{Logical. Argument of the optmatch function. Defaults to
+FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+set to TRUE, matching might return matches only for some of the treated units.}
 }
 \value{
 A dataframe, where each row corresponds to each treated unit, and

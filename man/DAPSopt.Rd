@@ -8,7 +8,7 @@ Function that chooses the optimal weight and fits DAPSm.}
 DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
   trt.col = NULL, w_tol = 0.01, distance = StandDist,
   caliper_type = c("DAPS", "PS"), quiet = FALSE, coord_dist = FALSE,
-  matching_algorithm = c("optimal", "greedy"))
+  matching_algorithm = c("optimal", "greedy"), remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, observed confounders,
@@ -49,6 +49,10 @@ spherical distance of points instead of Euclidean. Defaults to FALSE.}
 package to acquire the matches based on propensity score difference and a caliper on
 distance. The greedy option matches treated and control units sequentially, starting
 from the ones with the smallest propensity score difference. Defaults to 'optimal'.}
+
+\item{remove.unmatchables}{Logical. Argument of the optmatch function. Defaults to
+FALSE. If set to FALSE, the matching fails unless all treated units are matched. If
+set to TRUE, matching might return matches only for some of the treated units.}
 }
 \value{
 List of weight chosen, matched dataset, standardized difference of
