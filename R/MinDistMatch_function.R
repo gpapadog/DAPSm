@@ -52,6 +52,7 @@ MinDistMatch <- function(M, caliper = NULL) {
       
       # Has the control been seen before.
       duplic <- duplicated(wh_mins)
+      stop_matching <- which(duplic)[1] - 1
       
       if (is.na(stop_matching)) {  # No control is used twice.
         
