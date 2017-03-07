@@ -19,35 +19,60 @@
 #' MinDistMatch(D, caliper = 0.1)
 MinDistMatch <- function(M, caliper = NULL) {
   
+  mat <- NULL
+  if (is.null(caliper)) {
+    caliper <- Inf
+  }
+  
   num_trt <- nrow(M)
   num_con <- ncol(M)
   rownames(M) <- 1:num_trt
   colnames(M) <- 1:num_con
   
-  mat <- NULL
-  min_m <- min(M)
-  
-  # If caliper is set to NULL, all finite matches are allowed.
-  if (is.null(caliper)) {
-    caliper <- max(as.numeric(M)[!is.infinite(as.numeric(M))]) + 1
-  }
-  
-  while (min(M) <= caliper & !is.null(dim(M))) {
-    wh_row <- which(apply(M, 1, function(x) any(x == min_m)))[1]
-    wh_col <- which(M[wh_row, ] == min_m)[1]
-    mat <- rbind(mat, c(rownames(M)[wh_row], colnames(M)[wh_col]))
-    M <- M[ - wh_row, - wh_col]
-    min_m <- min(M)
-  }
-  
-  # In the end we're left with a vector, so we need to check for the last matched pair.
-  if (is.null(dim(M))) {
-    wh_col <- which(M == min(M))
-    if (M[wh_col] <= caliper) {
-      if (num_trt < num_con) {
-        mat <- rbind(mat, c(setdiff(1:num_trt, mat[, 1]), names(M)[wh_col]))
-      } else if (num_trt >= num_con) {
-        mat <- rbind(mat, c(names(M)[wh_col], setdiff(1:num_con, mat[, 1])))
+  while (nrow(M) > 0) {
+    
+    # Get the control that is closest to each treated unit.
+    mins <- apply(M, 1, min)
+    drop_rows <- which(mins > caliper)
+    
+    # Drop treated units that will not be matched within the caliper.
+    if (length(drop_rows) > 0) {
+      print(paste0(length(drop_rows), ' units do not have a match with this caliper.'))
+      M <- M[- drop_rows, ]
+      mins <- mins[- drop_rows]
+    }
+    
+    if (nrow(M) > 0) {
+      # Order the matrix such that the treated with the closest control is at the top.
+      M <- M[order(mins), ]
+      mins <- sort(mins)
+      
+      # Which control is the closes to each treated. 
+      wh_mins <- sapply(1:nrow(M), function(x) which(M[x, ] == mins[x])[1])
+      
+      # Has the control been seen before.
+      duplic <- duplicated(wh_mins)
+      
+      if (is.na(stop_matching)) {  # No control is used twice.
+        
+        mat <- rbind(mat, cbind(rownames(M), colnames(M)[wh_mins]))
+        M <- matrix(NA, nrow = 0, ncol = 1)
+        
+      } else {  # Some control is the closest to two or more treated units.
+        stop_matching <- which(duplic)[1] - 1
+        
+        mat <- rbind(mat, cbind(rownames(M)[1:stop_matching],
+                                colnames(M)[wh_mins[1:stop_matching]]))
+        
+        rows <- rownames(M)[- c(1:stop_matching)]
+        cols <- colnames(M)[- wh_mins[1:stop_matching]]
+        M <- M[-c(1:stop_matching), -wh_mins[1:stop_matching]]
+        
+        if (!is.matrix(M)) {
+          M <- matrix(M, nrow = 1, ncol = length(M))
+          rownames(M) <- rows
+          colnames(M) <- cols
+        }
       }
     }
   }
@@ -55,8 +80,10 @@ MinDistMatch <- function(M, caliper = NULL) {
   if (is.null(mat)) {
     stop('No matches were found.')
   }
-  mat <- mat[order(mat[, 1]), ]
+  
   mat <- matrix(as.numeric(mat), ncol = 2, nrow = nrow(mat))
+  mat <- mat[order(mat[, 1]), ]
   colnames(mat) <- c('Row Index', 'Column Index')
+  
   return(mat)
 }
