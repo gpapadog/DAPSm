@@ -43,7 +43,7 @@ MinDistMatch <- function(M, caliper = NULL) {
   # In the end we're left with a vector, so we need to check for the last matched pair.
   if (is.null(dim(M))) {
     wh_col <- which(M == min(M))
-    if (M[wh_col] <= caliper) {
+    if (any(M[wh_col] <= caliper)) {
       if (num_trt < num_con) {
         mat <- rbind(mat, c(setdiff(1:num_trt, mat[, 1]), names(M)[wh_col]))
       } else if (num_trt >= num_con) {
