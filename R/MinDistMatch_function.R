@@ -60,8 +60,7 @@ MinDistMatch <- function(M, caliper = NULL) {
         M <- matrix(NA, nrow = 0, ncol = 1)
         
       } else {  # Some control is the closest to two or more treated units.
-        stop_matching <- which(duplic)[1] - 1
-        
+
         mat <- rbind(mat, cbind(rownames(M)[1:stop_matching],
                                 colnames(M)[wh_mins[1:stop_matching]]))
         
