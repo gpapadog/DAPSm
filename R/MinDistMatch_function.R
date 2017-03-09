@@ -44,7 +44,7 @@ MinDistMatch <- function(M, caliper = NULL) {
     
     if (nrow(M) > 0) {
       # Order the matrix such that the treated with the closest control is at the top.
-      M <- M[order(mins), ]
+      M <- M[order(mins), , drop = FALSE]
       mins <- sort(mins)
       
       # Which control is the closes to each treated. 
