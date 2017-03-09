@@ -21,7 +21,8 @@ MinDistMatch <- function(M, caliper = NULL) {
   
   mat <- NULL
   if (is.null(caliper)) {
-    caliper <- Inf
+    # Setting the caliper so that rows with all elements infinite will be dropped.
+    caliper <- max(as.numeric(M)[!is.infinite(as.numeric(M))]) + 1
   }
   
   num_trt <- nrow(M)
