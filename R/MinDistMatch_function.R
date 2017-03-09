@@ -38,7 +38,7 @@ MinDistMatch <- function(M, caliper = NULL) {
     
     # Drop treated units that will not be matched within the caliper.
     if (length(drop_rows) > 0) {
-      M <- M[- drop_rows, ]
+      M <- M[- drop_rows, , drop = FALSE]
       mins <- mins[- drop_rows]
     }
     
