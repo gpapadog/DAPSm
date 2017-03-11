@@ -77,35 +77,43 @@ WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols
                       distance = distance, caliper_type = caliper_type,
                       coord_dist = coord_dist, matching_algorithm = matching_algorithm,
                       remove.unmatchables = remove.unmatchables)
-  pairs.out        <- daps.out$match
-  names(pairs.out) <- rownames(daps.out)
-  pairs.out        <- na.omit(pairs.out)
-  pairs.daps  <- dataset[c(as.numeric(names(pairs.out)),
-                           as.numeric(pairs.out)), ]
-  trt <- which(pairs.daps$X == 1)
-  cnt <- which(pairs.daps$X == 0)
-  if (length(cov.cols) == 1) {
-    diff_mat <- pairs.daps[, cov.cols]
-    stand_diff <- mean(diff_mat[trt]) - mean(diff_mat[cnt])
-    stand_diff <- stand_diff / sd(diff_mat[trt])
-  } else {
-    stand_diff <- apply(pairs.daps[trt, cov.cols], 2, mean) -
-      apply(pairs.daps[cnt, cov.cols], 2, mean)
-    stand_diff <- stand_diff / apply(pairs.daps[trt, cov.cols], 2, sd)
-  }
-  r$stand_diff <- stand_diff
-  r$ind_trt <- as.numeric(names(pairs.out))
-  r$ind_cnt <- as.numeric(pairs.out)
-  r$pairs <- pairs.daps
-  r$success <- FALSE
-  
-  
-  if (!any(abs(stand_diff) > cutoff)) {  # If none is above the cutoff.
-    r$success <- TRUE
-    r$new_interval <- c(interval[1], weight)
-  } else {
+  if (nrow(daps.out) > 0) {
+    pairs.out        <- daps.out$match
+    names(pairs.out) <- rownames(daps.out)
+    pairs.out        <- na.omit(pairs.out)
+    pairs.daps  <- dataset[c(as.numeric(names(pairs.out)),
+                             as.numeric(pairs.out)), ]
+    trt <- which(pairs.daps$X == 1)
+    cnt <- which(pairs.daps$X == 0)
+    if (length(cov.cols) == 1) {
+      diff_mat <- pairs.daps[, cov.cols]
+      stand_diff <- mean(diff_mat[trt]) - mean(diff_mat[cnt])
+      stand_diff <- stand_diff / sd(diff_mat[trt])
+    } else {
+      stand_diff <- apply(pairs.daps[trt, cov.cols], 2, mean) -
+        apply(pairs.daps[cnt, cov.cols], 2, mean)
+      stand_diff <- stand_diff / apply(pairs.daps[trt, cov.cols], 2, sd)
+    }
+    r$stand_diff <- stand_diff
+    r$ind_trt <- as.numeric(names(pairs.out))
+    r$ind_cnt <- as.numeric(pairs.out)
+    r$pairs <- pairs.daps
+    r$success <- FALSE
+    
+    
+    if (!any(abs(stand_diff) > cutoff)) {  # If none is above the cutoff.
+      r$success <- TRUE
+      r$new_interval <- c(interval[1], weight)
+    } else {
+      r$success <- FALSE
+      r$new_interval <- c(weight, interval[2])
+    }
+  } else {  # If we had no matched pairs.
     r$success <- FALSE
     r$new_interval <- c(weight, interval[2])
+    warning(paste0('No matched pairs for weight = ', weight, '. Trying larger weight.',
+                   'Consider setting remove.unmatchables = TRUE.'))
   }
+  
   return(r)
 }
