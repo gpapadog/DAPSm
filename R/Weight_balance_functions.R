@@ -85,7 +85,12 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                  remove.unmatchables = remove.unmatchables)
     pairs[[ii]] <- as.numeric(A$pairs[, 9:10])
     full_pairs[[ii]] <- A$pairs
-    distance_DAPS[ii] <- mean(fields::rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)]))
+    if (coord_dist) {
+      D <- fields::rdist.earth(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)])
+    } else {
+      D <- fields::rdist(A$pairs[, c(3, 4)], A$pairs[, c(7, 8)])
+    }
+    distance_DAPS[ii] <- mean(diag(D))
     A <- dataset[pairs[[ii]], ]
     num_match_DAPS[ii] <- length(pairs[[ii]]) / 2
     balance[ii, , ] <- CalculateBalance(dtaBef = as.data.frame(dataset),
