@@ -71,13 +71,13 @@ MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '',
   g <- g + scale_color_manual(values = c('darkgreen', 'red')) +
     theme(legend.position = 'none') +
     geom_line(aes(x = lon, y = lat, group = group), data = line_data,
-              size = rel(0.4), col = 'black')
+              size = rel(0.4), col = 'black') +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
   if (plot.title != '') {
     g <- g + ggtitle(plot.title) +
-      theme(plot.title = element_text(size = rel(1.6)),
+      theme(plot.title = element_text(size = rel(1.6), hjust = 0.5),
             legend.key.size = unit(1, "cm"),
-            legend.title = element_text(size = rel(1)),
-            legend.text = element_text(size = rel(1)))
+            legend.title = element_text(size = rel(1)))
   }
   print(g)
 }
