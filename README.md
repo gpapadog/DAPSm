@@ -31,7 +31,8 @@ For example, in the toyData2 data set, one could fit DAPSm with w = 0.7 by perfo
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 weight = 0.7, coords.columns = c(4, 5),
                 pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
-                coord_dist = TRUE, caliper_type = 'DAPS')
+                coord_dist = TRUE, caliper_type = 'DAPS',
+                matching_algorithm = 'greedy')
 ```
 
 ### DAPSm with fast search of the optimal weight
