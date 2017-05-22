@@ -21,13 +21,26 @@ toyData2 is a simulated data set where the locations of the observations are 200
 
 There are three main ways to analyze a data set for which we have set of observed confounders, location information (such as longitude, latitude), a binary treatment, and propensity score estimates of the treatment on the observed covariates.
 
-### DAPSm with fixed weight
+These ways include
+
+- DAPSm with fixed weight
+- DAPSm with fast search of the optimal weight
+- DAPSm with extensive search of the optimal weight (recommended)
+
+For each one of the three ways to choose the paramter $w$, we have a greedy algorithm,
+and an optimal algorithm available, which can be specified using the argument ```matching_algorithm``` equal to 'greedy' or 'optimal' accordingly. When the matching algorithm is set equal to optimal, the additional argument ```remove.unmatchables``` can be set equal to TRUE to allow the drop of treated units that do not have an appropriate match.
+
+### DAPSm with fixed weight, and greedy algorithm
 
 If the investigator has a prior belief of the relative importance of propensity score similarity and distance in the matching, DAPSm could be fit with fixed w expressing these beliefs.
 
 For example, in the toyData2 data set, one could fit DAPSm with w = 0.7 by performing
 
 ```
+data('toyData2')
+toyData2$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
+                            data = toyData2)$fitted.values
+
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 weight = 0.7, coords.columns = c(4, 5),
                 pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
@@ -35,7 +48,21 @@ daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 matching_algorithm = 'greedy')
 ```
 
-### DAPSm with fast search of the optimal weight
+### DAPSm with fixed weight, and optimal algorithm
+
+Optimal algorithm can often fail to return matches.
+
+```
+daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.5,
+                weight = 0.7, coords.columns = c(4, 5),
+                pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.15,
+                coord_dist = TRUE, caliper_type = 'DAPS',
+                matching_algorithm = 'optimal',
+                remove.unmatchables = TRUE)
+```
+
+
+### DAPSm with fast search of the optimal weight (greedy algorithm)
 
 The optimal weight is defined as the minimum w for which the absolute standardized difference of means (ASDM) of all covariates is less than a cutoff.
 
@@ -49,7 +76,8 @@ Fit this algorithm by performing
 daps <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.3,
                 weight = 'optimal', coords.columns = c(4, 5),
                 pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.15,
-                w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+                w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS',
+                matching_algorithm = 'greedy')
 ```
 
 ### DAPSm with extensive search for the optimal weight - *Recommended*
@@ -59,7 +87,8 @@ Instead, we can fit the algorithm for varying values of w and assess balance of 
 ```
 bal <- CalcDAPSWeightBalance(toyData2, weights = seq(0, 1, length.out = 40),
                              cov.cols = 6:9, trt.col = 1,
-                             coords.columns = c(4, 5), caliper = 0.3)
+                             coords.columns = c(4, 5), caliper = 0.3,
+                             matching_algorithm = 'greedy')
 ```
 
 Balance of the covariates can be assessed by checking the ASDM as a function of w using
@@ -67,6 +96,7 @@ Balance of the covariates can be assessed by checking the ASDM as a function of 
 ```
 PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 40), cutoff = 0.15)
 ```
+
 
 <br>
 
@@ -94,3 +124,19 @@ MatchedDataMap(x = bal$full_pairs[[10]], trt_coords = c(3, 4),
 
 Comparing the plots of matched pairs for the two choices of w we see that for larger w the matched pairs are further away from each other. This is expected since matching weigth given to distance is decreased for increasing w.
 
+
+
+### DAPSm with extensive search for the optimal weight with optimal matching
+
+```
+bal <- CalcDAPSWeightBalance(toyData2, weights = seq(0, 1, length.out = 40),
+                             cov.cols = 6:9, trt.col = 1,
+                             coords.columns = c(4, 5), caliper = 1,
+                             matching_algorithm = 'optimal',
+                             remove.unmatchables = TRUE)
+                             
+DAPS <- DAPSchoiceModel(toyData2, trt.col = 1, balance = bal$balance,
+                        cutoff = 0.2, pairs = bal$pairs,
+                        weights = seq(0, 1, length.out = 40))
+
+```
