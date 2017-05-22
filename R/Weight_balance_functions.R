@@ -149,7 +149,7 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               title_cex = 1) {
 
   if (is.null(ylimit)) {
-    ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]))
+    ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]), na.rm = TRUE)
   }
   par(mar = mar)
   plot(1, type = 'n', xlim = c(full_data, length(weights)), axes = FALSE,
