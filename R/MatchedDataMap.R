@@ -38,7 +38,7 @@
 #' MatchedDataMap(x = daps2$pairs, trt_coords = c(3, 4), con_coords = c(7, 8))
 MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '',
                            point_data = TRUE) {
-
+  
   x <- as.data.frame(x)
   
   point.data <- data.frame(lon = c(x[, trt_coords[1]], x[, con_coords[1]]),
@@ -56,28 +56,33 @@ MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '',
   }
   line_data <- as.data.frame(line_data)
   
-  us.dat <- map_data("state")
-  ct.dat <- map_data("county")
+  us.dat <- ggplot2::map_data("state")
+  ct.dat <- ggplot2::map_data("county")
   
-  g <- ggplot() + geom_polygon(aes(long, lat, group = group), color = 'grey55',
-                               fill = 'grey85', data = us.dat) +
-    theme_bw() +
-    theme(axis.text = element_blank(), axis.title = element_blank(),
-          panel.grid.major = element_blank(),
-          axis.ticks = element_blank(), panel.border = element_blank())
+  g <- ggplot2::ggplot() +
+    ggplot2::geom_polygon(ggplot2::aes(long, lat, group = group), color = 'grey55',
+                          fill = 'grey85', data = us.dat) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.text = ggplot2::element_blank(),
+                   axis.title = ggplot2::element_blank(),
+                   panel.grid.major = ggplot2::element_blank(),
+                   axis.ticks = ggplot2::element_blank(),
+                   panel.border = ggplot2::element_blank(),
+                   legend.position = 'none',
+                   panel.grid.minor = ggplot2::element_blank())
   if (point_data) {
-    g <- g + geom_point(aes(x = lon, y = lat, color = col), data = point.data)
+    g <- g + ggplot2::geom_point(ggplot2::aes(x = lon, y = lat, color = col),
+                                 data = point.data)
   }
-  g <- g + scale_color_manual(values = c('darkgreen', 'red')) +
-    theme(legend.position = 'none') +
-    geom_line(aes(x = lon, y = lat, group = group), data = line_data,
-              size = rel(0.4), col = 'black') +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  g <- g + ggplot2::scale_color_manual(values = c('darkgreen', 'red')) +
+    ggplot2::geom_line(ggplot2::aes(x = lon, y = lat, group = group), data = line_data,
+                       size = ggplot2::rel(0.4), col = 'black')
   if (plot.title != '') {
-    g <- g + ggtitle(plot.title) +
-      theme(plot.title = element_text(size = rel(1.6), hjust = 0.5),
-            legend.key.size = unit(1, "cm"),
-            legend.title = element_text(size = rel(1)))
+    g <- g + ggplot2::ggtitle(plot.title) +
+      ggplot2::theme(plot.title = ggplot2::element_text(size = ggplot2::rel(1.6),
+                                                        hjust = 0.5),
+                     legend.key.size = unit(1, "cm"),
+                     legend.title = ggplot2::element_text(size = ggplot2::rel(1)))
   }
   print(g)
 }
