@@ -96,8 +96,8 @@ dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
     matched_trt <- pairs[, 1]
     matched_con <- pairs[, 2]
   } else {  # Optimal.
-    opt_match <- pairmatch(M, data = data.frame(treatment_indicator),
-                           remove.unmatchables = remove.unmatchables)
+    opt_match <- optmatch::pairmatch(M, data = data.frame(treatment_indicator),
+                                     remove.unmatchables = remove.unmatchables)
     
     pairs_ids <- sort(as.character(unique(opt_match[!is.na(opt_match)])))
     if (length(pairs_ids) == 0) {  # If no matches were acheived return empty matrix.
