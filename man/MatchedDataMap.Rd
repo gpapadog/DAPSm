@@ -40,7 +40,8 @@ toyData2$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 daps1 <- DAPSest(toyData2, out.col = 2, trt.col = 1, caliper = 0.5,
                  weight = 0.2, coords.columns = c(4, 5),
                  pairsRet = TRUE, cov.cols = 6:9, cutoff = 0.1,
-                 w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS')
+                 w_tol = 0.001, coord_dist = TRUE, caliper_type = 'DAPS',
+                 matching_algorithm = 'greedy')
 MatchedDataMap(x = daps1$pairs, trt_coords = c(3, 4), con_coords = c(7, 8))
 # For a larger weight, less weight is given to distance, so matches will
 # further apart.

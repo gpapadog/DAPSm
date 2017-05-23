@@ -47,7 +47,8 @@
 #'                            data = toyData)$fitted.values
 #' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
 #'                              cov.cols = 6:9, trt.col = 1,
-#'                              coords.columns = c(4, 5), caliper = 0.1)
+#'                              coords.columns = c(4, 5), caliper = 0.1,
+#'                              matching_algorithm = 'greedy')
 CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
                                   out.col = NULL, coords.columns, caliper,
                                   caliper_type = c('DAPS', 'PS'), coord_dist = FALSE,
@@ -140,7 +141,8 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 #'                            data = toyData)$fitted.values
 #' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
 #'                              cov.cols = 6:9, trt.col = 1,
-#'                              coords.columns = c(4, 5), caliper = 0.3)
+#'                              coords.columns = c(4, 5), caliper = 0.3,
+#'                              matching_algorithm = 'greedy')
 #' PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
 #'                   cutoff = 0.15)
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
@@ -222,7 +224,8 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
 #'                            data = toyData)$fitted.values
 #' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
 #'                              cov.cols = 6:9, trt.col = 1,
-#'                              coords.columns = c(4, 5), caliper = 0.3)
+#'                              coords.columns = c(4, 5), caliper = 0.3,
+#'                              matching_algorithm = 'greedy')
 #' PlotWeightBalance(bal$balance, weights = seq(0, 1, length.out = 30),
 #'                   cutoff = 0.15)
 #' DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
@@ -308,7 +311,8 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
 #'                            data = toyData)$fitted.values
 #' bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
 #'                              cov.cols = 6:9, trt.col = 1,
-#'                              coords.columns = c(4, 5), caliper = 0.3)
+#'                              coords.columns = c(4, 5), caliper = 0.3,
+#'                              matching_algorithm = 'greedy')
 #' DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
 #'                         cutoff = 0.15, pairs = bal$pairs,
 #'                         weights = seq(0, 1, length.out = 30))

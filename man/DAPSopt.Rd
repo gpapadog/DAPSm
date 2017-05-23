@@ -67,7 +67,7 @@ data('toyData')
 toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
                            data = toyData)$fitted.values
 daps_opt <- DAPSopt(toyData, caliper = 0.5, coords.cols = c(4, 5),
-                    cov.cols = 6:9, trt.col = 1)
+                    cov.cols = 6:9, trt.col = 1, matching_algorithm = 'greedy')
 class(daps_opt)
 names(daps_opt)
 }

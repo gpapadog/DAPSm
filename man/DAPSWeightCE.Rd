@@ -35,7 +35,8 @@ toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
                            data = toyData)$fitted.values
 bal <- CalcDAPSWeightBalance(toyData, weights = seq(0, 1, length.out = 30),
                              cov.cols = 6:9, trt.col = 1,
-                             coords.columns = c(4, 5), caliper = 0.3)
+                             coords.columns = c(4, 5), caliper = 0.3,
+                             matching_algorithm = 'greedy')
 DAPS <- DAPSchoiceModel(toyData, trt.col = 1, balance = bal$balance,
                         cutoff = 0.15, pairs = bal$pairs,
                         weights = seq(0, 1, length.out = 30))

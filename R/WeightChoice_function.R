@@ -53,7 +53,7 @@
 #' r <- WeightChoice(toyData, trt.col = 1, caliper = 0.5, coords.cols = c(4, 5),
 #'                   cov.cols= 6:9, cutoff = 0.1, interval = c(0.5, 1),
 #'                   distance = StandDist, caliper_type = 'DAPS',
-#'                   coord_dist = FALSE)
+#'                   coord_dist = FALSE, matching_algorithm = 'greedy')
 #' names(r)
 WeightChoice <- function(dataset, trt.col = NULL, caliper, coords.cols, cov.cols,
                          cutoff, interval, distance = StandDist,

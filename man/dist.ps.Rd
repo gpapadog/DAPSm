@@ -62,6 +62,7 @@ toyData$prop.scores <- glm(Z ~ X1 + X2 + X3 + X4, family = binomial,
 daps <- dist.ps(treated = toyData[toyData$Z == 1, ],
                 control = toyData[toyData$Z == 0, ],
                 caliper_type = 'DAPS', caliper = 1,
-                coords.columns = c(4, 5))
+                coords.columns = c(4, 5),
+                matching_algorithm = 'greedy')
 head(daps)
 }

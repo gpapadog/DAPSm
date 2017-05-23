@@ -48,7 +48,8 @@
 #' daps <- dist.ps(treated = toyData[toyData$Z == 1, ],
 #'                 control = toyData[toyData$Z == 0, ],
 #'                 caliper_type = 'DAPS', caliper = 1,
-#'                 coords.columns = c(4, 5))
+#'                 coords.columns = c(4, 5),
+#'                 matching_algorithm = 'greedy')
 #' head(daps)
 dist.ps <- function(treated, control, caliper = 0.1, weight = 0.8,
                     coords.columns = NULL, distance = StandDist,
