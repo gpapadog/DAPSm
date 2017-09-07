@@ -321,7 +321,7 @@ DAPSchoiceModel <- function(dataset, out.col = NULL, trt.col = NULL, balance,
 #'                    chosen_w = DAPS$weight)
 #' CE$plot
 DAPSWeightCE <- function(dataset, out.col = NULL, trt.col = NULL, weights,
-                         pairs, chosen_w) {
+                         pairs, chosen_w, main_title = NULL) {
   
   out_name <- 'Y'
   trt_name <- 'X'
@@ -350,11 +350,15 @@ DAPSWeightCE <- function(dataset, out.col = NULL, trt.col = NULL, weights,
   CEweight$col <- 'red'
   CEweight$col[wh] <- 'blue'
   
+  if (is.null(main_title)) {
+    main_title <- 'Causal Effect estimates with 95% confidence intervals'
+  }
+  
   g <- ggplot(CEweight, aes(x = Weight, y = Estimate, group = 1, color = col)) +
     geom_pointrange(aes(ymin = LB, ymax = UB),
                     data = CEweight, colour = "black") +
     geom_point(shape = 16, size = 3) +
-    ggtitle('Causal Effect estimates with 95% confidence intervals') +
+    ggtitle(main_title) +
     theme(plot.title = element_text(size = rel(1.4)),
           axis.title = element_text(size = rel(1.4)),
           axis.text = element_text(size = rel(1.2))) +
