@@ -13,13 +13,16 @@
 #' both dtaBef and dtaAfter
 #' @param trt
 #' Column index for treatment variable.
+#' @param diff_means Logical. Set equal to TRUE to return the difference in
+#' means of treated versus controls. Defaults to FALSE.
 #' 
 #' @return A 2 by length(cols) matrix with the standardized difference of
 #' means before and after matching. (Second row is empty if dtaAfter is
 #' not given.)
 #' 
 #' @export
-CalculateBalance <- function(dtaBef, dtaAfter = NULL, cols, trt) {
+CalculateBalance <- function(dtaBef, dtaAfter = NULL, cols, trt,
+                             diff_means = FALSE) {
   
   dtaBef <- as.data.frame(dtaBef)
   if (!is.null(dtaAfter)) {
@@ -33,14 +36,18 @@ CalculateBalance <- function(dtaBef, dtaAfter = NULL, cols, trt) {
   
   for (cc in 1:length(cols)){
     stand.means[1, cc] <- (mean(dtaBef[dtaBef[, trt] == 1, cols[cc]], na.rm = T) -
-                             mean(dtaBef[dtaBef[, trt] == 0, cols[cc]], na.rm=T)) /
-      sd(dtaBef[dtaBef[, trt] == 1, cols[cc]], na.rm=T)
+                             mean(dtaBef[dtaBef[, trt] == 0, cols[cc]], na.rm=T))
+    if (!diff_means) {
+      stand.means[1, cc] <- stand.means[1, cc] / sd(dtaBef[dtaBef[, trt] == 1, cols[cc]], na.rm=T)
+    }
   }
   if (!is.null(dtaAfter)) {
     for (cc in 1:length(cols)){
       stand.means[2, cc] <- (mean(dtaAfter[dtaAfter[, trt] == 1, cols[cc]], na.rm = T) -
-                               mean(dtaAfter[dtaAfter[, trt] == 0, cols[cc]], na.rm=T)) /
-        sd(dtaAfter[dtaAfter[, trt] == 1, cols[cc]], na.rm=T)
+                               mean(dtaAfter[dtaAfter[, trt] == 0, cols[cc]], na.rm=T))
+      if (!diff_means) {
+        stand.means[2, cc] <- stand.means[2, cc] / sd(dtaAfter[dtaAfter[, trt] == 1, cols[cc]], na.rm=T)
+      }
     }
   }
   return(stand.means)
