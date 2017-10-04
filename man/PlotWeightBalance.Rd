@@ -6,7 +6,7 @@
 \usage{
 PlotWeightBalance(balance, full_data = -3, weights, cutoff, axis_cex = 1,
   mar = c(4, 4, 2, 8), inset = -0.1, ylimit = NULL, leg_cex = 1,
-  plot_title = "", title_cex = 1)
+  plot_title = "", title_cex = 1, cols = NULL)
 }
 \arguments{
 \item{balance}{A 3-dimensional array including the SDM. First dimension is equal to length

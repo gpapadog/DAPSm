@@ -151,8 +151,8 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               title_cex = 1, cols = NULL) {
 
   num_cov <- dim(balance)[3]
-  lty_cov <- sapply(1 : num_cov, function(cc)
-    ifelse(cc / 9 >= 1, ifelse(cc / 17 >= 1, 5, 3), 1))
+  lty_limit <- min(9, length(cols))
+  
   if (!is.null(cols)) {
     cols2 <- cols
     while (length(cols2) < num_cov) {
@@ -162,7 +162,10 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   } else {
     cols <- 1 : num_cov
   }
-  
+
+  lty_cov <- sapply(1 : num_cov, function(cc)
+    ifelse(cc / lty_limit > 1, ifelse(cc / lty_limit > 2, 5, 3), 1))
+
   if (is.null(ylimit)) {
     ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]), na.rm = TRUE)
   }
