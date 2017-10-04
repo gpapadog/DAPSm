@@ -4,7 +4,7 @@
 \alias{CalculateBalance}
 \title{Calculate balance of covariates before and after matching.}
 \usage{
-CalculateBalance(dtaBef, dtaAfter = NULL, cols, trt)
+CalculateBalance(dtaBef, dtaAfter = NULL, cols, trt, diff_means = FALSE)
 }
 \arguments{
 \item{dtaBef}{Data frame including the data before matching.}
@@ -17,6 +17,9 @@ dataset.}
 both dtaBef and dtaAfter}
 
 \item{trt}{Column index for treatment variable.}
+
+\item{diff_means}{Logical. Set equal to TRUE to return the difference in
+means of treated versus controls. Defaults to FALSE.}
 }
 \value{
 A 2 by length(cols) matrix with the standardized difference of

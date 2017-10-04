@@ -148,8 +148,21 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               axis_cex = 1, mar = c(4, 4, 2, 8), inset = -0.1,
                               ylimit = NULL, leg_cex = 1, plot_title = '',
-                              title_cex = 1) {
+                              title_cex = 1, cols = NULL) {
 
+  num_cov <- dim(balance)[3]
+  lty_cov <- sapply(1 : num_cov, function(cc)
+    ifelse(cc / 9 >= 1, ifelse(cc / 17 >= 1, 5, 3), 1))
+  if (!is.null(cols)) {
+    cols2 <- cols
+    while (length(cols2) < num_cov) {
+      cols2 <- c(cols2, cols)
+    }
+    cols <- cols2
+  } else {
+    cols <- 1 : num_cov
+  }
+  
   if (is.null(ylimit)) {
     ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]), na.rm = TRUE)
   }
@@ -160,18 +173,18 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   axis(1, labels = c('Full-Data', round(weights, 2)),
        at = c(full_data, 1:length(weights)), cex.axis = axis_cex)
   
-  for (cc in 1:dim(balance)[3]) {
+  for (cc in 1 : num_cov) {
     plot_cov <- c(balance[1, 1, cc], balance[, 2, cc])
-    lines(1:length(weights), plot_cov[- 1], col = cc, lwd = 1.5,
-          lty = ifelse(cc / 9 >= 1, ifelse(cc / 17 >= 1, 5, 3), 1))
-    lines(c(full_data, 1), plot_cov[1:2], col = cc, lty = 2)
-    points(full_data, plot_cov[1], pch = 16, col = cc)
+    lines(1:length(weights), plot_cov[- 1], col = cols[cc], lwd = 1.5,
+          lty = lty_cov[cc])
+    lines(c(full_data, 1), plot_cov[1:2], col = cols[cc], lty = 2)
+    points(full_data, plot_cov[1], pch = 16, col = cols[cc])
   }
   abline(h = c(cutoff, - cutoff), lty = 2, lwd = 3)
   par(xpd = TRUE)
-  legend('topright', col = 1:dim(balance)[3],
-         lty = c(rep(1, 8), rep(3, 8), rep(5, 8)), lwd = 1.5,
-         legend = dimnames(balance)[[3]], cex = leg_cex, inset = c(inset, 0))
+  legend('topright', col = cols, lty = lty_cov, lwd = 1.5,
+         legend = dimnames(balance)[[3]], cex = leg_cex,
+         inset = c(inset, 0))
   title(main = plot_title, cex.main = title_cex)
 }
 

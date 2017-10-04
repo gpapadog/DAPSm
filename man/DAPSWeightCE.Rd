@@ -5,7 +5,7 @@
 \title{Plot the effect estimate as a function of w.}
 \usage{
 DAPSWeightCE(dataset, out.col = NULL, trt.col = NULL, weights, pairs,
-  chosen_w)
+  chosen_w, main_title = NULL)
 }
 \arguments{
 \item{dataset}{The dataset that was supplied to CalcDAPSWeightBalance() for calculating
