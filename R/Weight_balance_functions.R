@@ -148,7 +148,8 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               axis_cex = 1, mar = c(4, 4, 2, 8), inset = -0.1,
                               ylimit = NULL, leg_cex = 1, plot_title = '',
-                              title_cex = 1, cols = NULL) {
+                              title_cex = 1, cols = NULL, xlab = 'Weight',
+                              ylab = 'ASDM') {
 
   num_cov <- dim(balance)[3]
   lty_limit <- min(9, length(cols))
@@ -171,7 +172,7 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   }
   par(mar = mar)
   plot(1, type = 'n', xlim = c(full_data, length(weights)), axes = FALSE,
-       ylim = ylimit, ylab = 'ASDM', xlab = 'Weight')
+       ylim = ylimit, ylab = ylab, xlab = xlab)
   axis(2)
   axis(1, labels = c('Full-Data', round(weights, 2)),
        at = c(full_data, 1:length(weights)), cex.axis = axis_cex)
@@ -183,8 +184,11 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
     lines(c(full_data, 1), plot_cov[1:2], col = cols[cc], lty = 2)
     points(full_data, plot_cov[1], pch = 16, col = cols[cc])
   }
-  abline(h = c(cutoff, - cutoff), lty = 2, lwd = 3)
-  par(xpd = TRUE)
+  segments(x0 = full_data, y0 = cutoff, x1 = length(weights), y1 = cutoff,
+           lty = 2, lwd = 3)
+  segments(x0 = full_data, y0 = - cutoff, x1 = length(weights), y1 = - cutoff,
+           lty = 2, lwd = 3)
+
   legend('topright', col = cols, lty = lty_cov, lwd = 1.5,
          legend = dimnames(balance)[[3]], cex = leg_cex,
          inset = c(inset, 0))
@@ -379,7 +383,8 @@ DAPSWeightCE <- function(dataset, out.col = NULL, trt.col = NULL, weights,
           axis.title = element_text(size = rel(1.4)),
           axis.text = element_text(size = rel(1.2))) +
     ylab('Estimate') + theme(legend.position="none") +
-    geom_line(aes(x = weights, y = l$fitted), col = 'black')
+    geom_line(aes(x = weights, y = l$fitted), col = 'black') +
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(list(CE = CEweight[, 1:5], plot = g))
 }

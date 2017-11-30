@@ -85,7 +85,7 @@ MatchedDataMap <- function(x, trt_coords, con_coords, plot.title = '',
                      legend.key.size = unit(1, "cm"),
                      legend.title = ggplot2::element_text(size = ggplot2::rel(1)))
   }
-  print(g)
+  return(g)
 }
 
 
