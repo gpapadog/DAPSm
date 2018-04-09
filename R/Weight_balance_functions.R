@@ -148,7 +148,7 @@ CalcDAPSWeightBalance <- function(dataset, weights, cov.cols, trt.col = NULL,
 PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
                               axis_cex = 1, mar = c(4, 4, 2, 8), inset = -0.1,
                               ylimit = NULL, leg_cex = 1, plot_title = '',
-                              title_cex = 1, cols = NULL, xlab = 'Weight',
+                              title_cex = 1, cols = NULL, xlab = 'weight (w)',
                               ylab = 'ASDM') {
 
   num_cov <- dim(balance)[3]
@@ -170,7 +170,9 @@ PlotWeightBalance <- function(balance, full_data = - 3, weights, cutoff,
   if (is.null(ylimit)) {
     ylimit <- range(c(balance[, 2, ], 0, cutoff, balance[1, 1, ]), na.rm = TRUE)
   }
-  par(mar = mar)
+  if (!is.null(mar)) {
+    par(mar = mar)
+  }
   plot(1, type = 'n', xlim = c(full_data, length(weights)), axes = FALSE,
        ylim = ylimit, ylab = ylab, xlab = xlab)
   axis(2)
