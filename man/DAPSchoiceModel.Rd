@@ -5,8 +5,8 @@
 \title{Choosing the optimal weight and fitting the corresponding DAPSm.}
 \usage{
 DAPSchoiceModel(dataset, out.col = NULL, trt.col = NULL, balance,
-  cutoff = 0.1, pairs, full_pairs = NULL, distance_DAPS = NULL, weights,
-  true_value = NULL)
+  cutoff = 0.1, pairs, full_pairs = NULL, distance_DAPS = NULL,
+  weights, true_value = NULL)
 }
 \arguments{
 \item{dataset}{The dataset that was supplied to CalcDAPSWeightBalance() for calculating

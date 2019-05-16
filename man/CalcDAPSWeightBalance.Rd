@@ -5,9 +5,10 @@
 \title{DAPSm with extensive search for optimal w.}
 \usage{
 CalcDAPSWeightBalance(dataset, weights, cov.cols, trt.col = NULL,
-  out.col = NULL, coords.columns, caliper, caliper_type = c("DAPS", "PS"),
-  coord_dist = FALSE, distance = StandDist,
-  matching_algorithm = c("optimal", "greedy"), remove.unmatchables = FALSE)
+  out.col = NULL, coords.columns, caliper, caliper_type = c("DAPS",
+  "PS"), coord_dist = FALSE, distance = StandDist,
+  matching_algorithm = c("optimal", "greedy"),
+  remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score

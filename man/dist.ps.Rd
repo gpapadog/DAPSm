@@ -5,8 +5,9 @@
 \title{The central DAPS function}
 \usage{
 dist.ps(treated, control, caliper = 0.1, weight = 0.8,
-  coords.columns = NULL, distance = StandDist, caliper_type = c("DAPS",
-  "PS"), coord_dist = FALSE, matching_algorithm = c("optimal", "greedy"),
+  coords.columns = NULL, distance = StandDist,
+  caliper_type = c("DAPS", "PS"), coord_dist = FALSE,
+  matching_algorithm = c("optimal", "greedy"),
   remove.unmatchables = FALSE)
 }
 \arguments{

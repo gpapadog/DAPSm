@@ -8,7 +8,8 @@ Function that chooses the optimal weight and fits DAPSm.}
 DAPSopt(dataset, caliper, coords.cols, cov.cols, cutoff = 0.1,
   trt.col = NULL, w_tol = 0.01, distance = StandDist,
   caliper_type = c("DAPS", "PS"), quiet = FALSE, coord_dist = FALSE,
-  matching_algorithm = c("optimal", "greedy"), remove.unmatchables = FALSE)
+  matching_algorithm = c("optimal", "greedy"),
+  remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, observed confounders,

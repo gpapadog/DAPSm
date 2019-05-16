@@ -7,9 +7,9 @@
 DAPSest(dataset, out.col = NULL, trt.col = NULL, caliper = 0.1,
   weight = "optimal", coords.columns = NULL, pairsRet = FALSE,
   cov.cols = NULL, cutoff = 0.1, w_tol = 0.01, coord_dist = FALSE,
-  distance = StandDist, caliper_type = c("DAPS", "PS"), quiet = FALSE,
-  true_value = NULL, matching_algorithm = c("optimal", "greedy"),
-  remove.unmatchables = FALSE)
+  distance = StandDist, caliper_type = c("DAPS", "PS"),
+  quiet = FALSE, true_value = NULL, matching_algorithm = c("optimal",
+  "greedy"), remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score

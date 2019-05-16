@@ -4,7 +4,8 @@
 \alias{CalculateBalance}
 \title{Calculate balance of covariates before and after matching.}
 \usage{
-CalculateBalance(dtaBef, dtaAfter = NULL, cols, trt, diff_means = FALSE)
+CalculateBalance(dtaBef, dtaAfter = NULL, cols, trt,
+  diff_means = FALSE)
 }
 \arguments{
 \item{dtaBef}{Data frame including the data before matching.}

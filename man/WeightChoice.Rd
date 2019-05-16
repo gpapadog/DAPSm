@@ -4,9 +4,10 @@
 \alias{WeightChoice}
 \title{The central DAPS optimal function}
 \usage{
-WeightChoice(dataset, trt.col = NULL, caliper, coords.cols, cov.cols, cutoff,
-  interval, distance = StandDist, caliper_type, coord_dist = FALSE,
-  matching_algorithm = c("optimal", "greedy"), remove.unmatchables = FALSE)
+WeightChoice(dataset, trt.col = NULL, caliper, coords.cols, cov.cols,
+  cutoff, interval, distance = StandDist, caliper_type,
+  coord_dist = FALSE, matching_algorithm = c("optimal", "greedy"),
+  remove.unmatchables = FALSE)
 }
 \arguments{
 \item{dataset}{Data frame including treatment, outcome, coordinates, propensity score

@@ -4,7 +4,8 @@
 \alias{FormDataset}
 \title{Forming a data set.}
 \usage{
-FormDataset(dataset, ignore.cols = NULL, out.col = NULL, trt.col = NULL)
+FormDataset(dataset, ignore.cols = NULL, out.col = NULL,
+  trt.col = NULL)
 }
 \arguments{
 \item{dataset}{The data frame we want to reform.}
